@@ -1,36 +1,48 @@
 #--------------------------------------------------------------
-#--------------------- C++ ------------------------------------
+#--------------------- OS Generated Files ---------------------
 #--------------------------------------------------------------
 
-# Prerequisites
-*.d
-
-# Compiled Object files
-*.slo
-*.lo
-*.o
-*.obj
-
-# Precompiled Headers
-*.gch
-*.pch
-
-# Compiled Dynamic libraries
-*.so
-*.dylib
-*.dll
-
-# Fortran module files
-*.mod
-*.smod
-
-# Compiled Static libraries
-*.lai
-*.la
-*.a
-*.lib
 
 # Executables
 *.exe
-*.out
-*.app
+
+GMS Env-MFC-VS2013/.DS_Store
+
+GMS Env-MFC-VS2013/.DS_Store?
+
+GMS Env-MFC-VS2013/._*
+
+GMS Env-MFC-VS2013/.Spotlight-V100
+
+GMS Env-MFC-VS2013/.Trashes
+GMS Env-MFC-VS2013/ehthumbs.db
+GMS Env-MFC-VS2013/Thumbs.db
+
+
+
+GMS Env-MFC-VS2013/.vs/EntornGVI/v15/*
+
+GMS Env-MFC-VS2013/Debug/*
+#GMS Env-MFC-VS2013/Debug/*.exe
+#GMS Env-MFC-VS2013/Debug/*.exp
+#GMS Env-MFC-VS2013/Debug/*.lik
+#GMS Env-MFC-VS2013/Debug/*.pdb
+
+
+GMS Env-MFC-VS2013/EntornVGI/Debug/EntornVGI.tlog/*.obj
+
+
+GMS Env-MFC-VS2013/EntornVGI/Debug/EntornVGI.tlog/*.log
+
+GMS Env-MFC-VS2013/.vs/EntornVGI/v15/*
+
+GMS Env-MFC-VS2013/Debug/*.ilk
+GMS Env-MFC-VS2013/Debug/*.lib
+GMS Env-MFC-VS2013/Debug/*.obj
+GMS Env-MFC-VS2013/EntornVGI/Debug/*.obj
+GMS Env-MFC-VS2013/EntornVGI/Debug/*.log
+GMS Env-MFC-VS2013/EntornVGI/Debug/*.pch
+GMS Env-MFC-VS2013/EntornVGI/Debug/*.res
+GMS Env-MFC-VS2013/EntornVGI/Debug/*.pdb
+
+*.lastbuildstate
