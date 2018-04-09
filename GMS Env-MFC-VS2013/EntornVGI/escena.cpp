@@ -19,6 +19,13 @@ void dibuixa_EscenaGL(char objecte, CColor col_object, bool ref_mat, bool sw_mat
 
 	switch (objecte)
 	{
+// Hurikan drawing
+	case HURIKAN:
+		glDisable(GL_TEXTURE_2D);
+		sea();
+		hurikan(textur, texturID);
+		break;
+
 // Truck drawing
 	case TRUCK:
 		glDisable(GL_TEXTURE_2D);
@@ -914,4 +921,16 @@ void sea(void)
 		it1++;
 	}
 
+}
+
+
+
+// OBJECTE hurikan project
+void hurikan(bool textu, GLuint VTextu[NUM_MAX_TEXTURES])
+{
+
+	glPushMatrix();
+	glScalef(5.0f, 5.0f, 5.0f);
+	glutSolidCube(1.0);
+	glPopMatrix();
 }
