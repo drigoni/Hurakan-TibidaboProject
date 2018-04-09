@@ -312,6 +312,8 @@ public:
 	afx_msg void OnUpdateShadersPhong(CCmdUI *pCmdUI);
 	afx_msg void OnVistaSatelit();
 	afx_msg void OnUpdateVistaSatelit(CCmdUI *pCmdUI);
+	afx_msg void OnObjectHurikan();
+	afx_msg void OnUpdateObjectHurikan(CCmdUI *pCmdUI);
 };
 
 #ifndef _DEBUG  // Versión de depuración en EntornVGIView.cpp
