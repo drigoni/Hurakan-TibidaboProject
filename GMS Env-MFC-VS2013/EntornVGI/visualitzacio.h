@@ -15,7 +15,7 @@
 void Iluminacio(char ilumin,bool ifix,bool ll_amb,LLUM lumin,bool textur,char obj,bool bc_lin,int step);
 
 // GMS Environment: orthographic Projection functions;
-void Projeccio_Orto();
+void Projeccio_Orto(int minx, int miny, GLsizei w, GLsizei h);
 void Vista_Ortografica(int prj,GLfloat Raux,CColor col_fons,CColor col_object,char objecte,GLfloat mida,int step,
 				bool oculta,bool testv,bool bck_ln,char iluminacio,bool llum_amb,LLUM lumi,bool textur,
 				bool textur_map,bool ifix,bool eix);

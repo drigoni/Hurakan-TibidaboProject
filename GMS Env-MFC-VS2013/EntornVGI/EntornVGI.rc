@@ -323,6 +323,7 @@ BEGIN
     POPUP "Projection"
     BEGIN
         MENUITEM "Perspectiva",                 32786, CHECKED
+        MENUITEM "Orthographics",               ID_PROJECTION_ORTHOGRAPHICS, CHECKED
     END
     POPUP "Object"
     BEGIN

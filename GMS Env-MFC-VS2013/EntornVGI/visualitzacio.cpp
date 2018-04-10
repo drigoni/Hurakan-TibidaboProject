@@ -204,10 +204,22 @@ void Iluminacio(char ilumin,bool ifix,bool ll_amb,LLUM lumin,bool textur,bool te
 
 // Projeccio_Orto: Definition of Viewport and glOrtho 
 // ---- GMS Environment: PAY ATTENTION!!. YOU MUST DEFINE FUNCTION PARAMETERS HERE
-void Projeccio_Orto()
+void Projeccio_Orto(int minx, int miny, GLsizei w, GLsizei h)
 {   
-// ---- GMS Environment: PAY ATTENTION!!. YOU MUST DEFINE HERE THE PARAMETERS OF ORTOGRAPHIC PROJECTION
-//			        LOADED IN PROJECTION MATRIX GL_PROJECTION
+
+	// Viewport definition
+	glViewport(minx, miny, w, h);
+	if (h == 0) h = 1;
+
+	// Switch on the GL_PROJECTION matrix structure
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+
+	glOrtho(-10, 10, -10, 10, 0, 20);
+
+	// Switch on the GL_MODELVIEW matrix structure
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
 }
 
 // Vista_Ortogràfica: To define lighting conditions (calling Iluminacio function) and load parameters in GL_MODELVIEW MATRIX (Point of View). 
@@ -225,6 +237,23 @@ void Vista_Ortografica(int prj,GLfloat Raux,CColor col_fons,CColor col_object,ch
 //								You must define here the point of View (gluLookAt) according
 //								the ortographic (top, front, isometric) view given by prj variable 
 //								(see the prj values in case ORTOGRAFICA in OnPaint() function).
+	switch (prj)
+	{
+	case 0: //Upper right 
+		gluLookAt(0.0, 0.0, -10.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+		break;
+	case 1: //Upper left 
+		gluLookAt(-10.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+		break;
+	case 2: //Lower left 
+		gluLookAt(0.0, -10.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0);
+		break;
+	default: //Lower right 
+		gluLookAt(-10.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+		break;
+	}
+	
+
 
 // Clear the color and depth buffers.
 	Fons(col_fons);

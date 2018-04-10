@@ -145,6 +145,8 @@ BEGIN_MESSAGE_MAP(CEntornVGIView, CView)
 	ON_UPDATE_COMMAND_UI(ID_VISTA_SATELIT, &CEntornVGIView::OnUpdateVistaSatelit)
 		ON_COMMAND(ID_OBJECT_HURIKAN, &CEntornVGIView::OnObjectHurikan)
 		ON_UPDATE_COMMAND_UI(ID_OBJECT_HURIKAN, &CEntornVGIView::OnUpdateObjectHurikan)
+		ON_COMMAND(ID_PROJECTION_ORTHOGRAPHICS, &CEntornVGIView::OnProjectionOrthographics)
+		ON_UPDATE_COMMAND_UI(ID_PROJECTION_ORTHOGRAPHICS, &CEntornVGIView::OnUpdateProjectionOrthographics)
 		END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -648,9 +650,8 @@ void CEntornVGIView::OnPaint()
 // Here we call the ProjeccioOrto and Ortografica calls to obtain the four orthographic views (top, front, isometric)
 // ----------GMS Environment: YOU MUST COMPLETE WHEN YOU IMPLEMENT ORTHOGRAPHIC VIEW
 // PLANTA (Upper Right)
-/*
 // Definition of Viewport, Projection and Camera
-		Projeccio_Orto();
+		Projeccio_Orto(w/2, h/2, w/2, h/2);
 		Vista_Ortografica(0, OPV.R, c_fons, col_obj, objecte, mida, pas, oculta,
 			test_vis, back_line, ilumina, llum_ambient, llumGL, textura, textura_map, ifixe, eixos);
 
@@ -662,7 +663,7 @@ void CEntornVGIView::OnPaint()
 
 // ALÇAT (Upper Left)
 // Definition of Viewport, Projection and Camera
-		Projeccio_Orto();
+		Projeccio_Orto(0, h/2, w/2, h/2);
 		Vista_Ortografica(1, OPV.R, c_fons, col_obj, objecte, mida, pas, oculta,
 			test_vis, back_line, ilumina, llum_ambient, llumGL, textura, textura_map, ifixe, eixos);
 
@@ -672,9 +673,9 @@ void CEntornVGIView::OnPaint()
 		  dibuixa_Escena();		// Draw scene geometry using OpenGL commands.
 		glPopMatrix();
 
-// PROFILE (Upper Left)
+// PROFILE (Lower Left)
 // Definition of Viewport, Projection and Camera
-		Projeccio_Orto();
+		Projeccio_Orto(0, 0, w / 2, h / 2);
 		Vista_Ortografica(2, OPV.R, c_fons, col_obj, objecte, mida, pas, oculta,
 			test_vis, back_line, ilumina, llum_ambient, llumGL, textura, textura_map, ifixe, eixos);
 
@@ -686,16 +687,16 @@ void CEntornVGIView::OnPaint()
 
 // ISOMETRIC (Lower Right)
 // Definition of Viewport, Projection and Camera
-		Projeccio_Orto();
+		Projeccio_Orto(w/2, 0, w/2, h/2);
 		Vista_Ortografica(3, OPV.R, c_fons, col_obj, objecte, mida, pas, oculta,
 			test_vis, back_line, ilumina, llum_ambient, llumGL, textura, textura_map, ifixe, eixos);
-
+			
 // Draw the object or scene
 		glPushMatrix();
 		  configura_Escena();   // To apply Geometrical Transforms according Transform pop up and to configure scene objects
 		  dibuixa_Escena();		// Draw scene geometry using OpenGL commands.
 		glPopMatrix();
-*/
+
 
 // Swap OpenGL buffer --> Screen Buffer
 		SwapBuffers(m_pDC->GetSafeHdc());
@@ -2490,6 +2491,26 @@ void CEntornVGIView::OnUpdateProjeccioPerspectiva(CCmdUI *pCmdUI)
 }
 
 
+void CEntornVGIView::OnProjectionOrthographics()
+{
+	// TODO: Add your command controller here
+	projeccio = ORTO;
+	mobil = false;			zzoom = false;
+
+	// Return to main loop OnPaint() to redraw the scene
+	InvalidateRect(NULL, false);
+}
+
+
+void CEntornVGIView::OnUpdateProjectionOrthographics(CCmdUI *pCmdUI)
+{
+	// TODO: Agregue aquí su código de controlador de IU para actualización de comandos
+	if (projeccio == ORTO) pCmdUI->SetCheck(1);
+	else pCmdUI->SetCheck(0);
+}
+
+
+
 /* ------------------------------------------------------------------------- */
 /*					5. OBJECT					                             */
 /* ------------------------------------------------------------------------- */
@@ -3375,6 +3396,7 @@ void CEntornVGIView::Refl_MaterialOn()
 	sw_material[2] = sw_material_old[2];
 	sw_material[3] = sw_material_old[3];
 }
+
 
 
 
