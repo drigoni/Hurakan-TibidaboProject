@@ -204,18 +204,19 @@ void Iluminacio(char ilumin,bool ifix,bool ll_amb,LLUM lumin,bool textur,bool te
 
 // Projeccio_Orto: Definition of Viewport and glOrtho 
 // ---- GMS Environment: PAY ATTENTION!!. YOU MUST DEFINE FUNCTION PARAMETERS HERE
-void Projeccio_Orto(int minx, int miny, GLsizei w, GLsizei h)
+void Projeccio_Orto(int minx, int miny, GLsizei w, GLsizei h, float zoom)
 {   
 
 	// Viewport definition
 	glViewport(minx, miny, w, h);
+	glScissor(minx, miny, w, h);
 	if (h == 0) h = 1;
 
 	// Switch on the GL_PROJECTION matrix structure
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 
-	glOrtho(-10, 10, -10, 10, 0, 20);
+	glOrtho(-10, 10, -10, 10, p_near, p_far + zoom);
 
 	// Switch on the GL_MODELVIEW matrix structure
 	glMatrixMode(GL_MODELVIEW);
@@ -240,16 +241,16 @@ void Vista_Ortografica(int prj,GLfloat Raux,CColor col_fons,CColor col_object,ch
 	switch (prj)
 	{
 	case 0: //Upper right 
-		gluLookAt(0.0, 0.0, -10.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+		gluLookAt(0.0, -10.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0);
 		break;
 	case 1: //Upper left 
-		gluLookAt(-10.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+		gluLookAt(10.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0);
 		break;
 	case 2: //Lower left 
-		gluLookAt(0.0, -10.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0);
+		gluLookAt(0.0, 0.0, 10.0, 0.0, 0.0, 0.0, -1.0, 0.0, 0.0);
 		break;
 	default: //Lower right 
-		gluLookAt(-10.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+		gluLookAt(10.0, 10.0, 10.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0);
 		break;
 	}
 	

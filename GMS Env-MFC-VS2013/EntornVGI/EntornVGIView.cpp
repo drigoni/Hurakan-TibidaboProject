@@ -147,6 +147,8 @@ BEGIN_MESSAGE_MAP(CEntornVGIView, CView)
 		ON_UPDATE_COMMAND_UI(ID_OBJECT_HURIKAN, &CEntornVGIView::OnUpdateObjectHurikan)
 		ON_COMMAND(ID_PROJECTION_ORTHOGRAPHICS, &CEntornVGIView::OnProjectionOrthographics)
 		ON_UPDATE_COMMAND_UI(ID_PROJECTION_ORTHOGRAPHICS, &CEntornVGIView::OnUpdateProjectionOrthographics)
+		ON_COMMAND(ID_PROJECTION_AXONOMETRICA, &CEntornVGIView::OnProjectionAxonometrica)
+		ON_UPDATE_COMMAND_UI(ID_PROJECTION_AXONOMETRICA, &CEntornVGIView::OnUpdateProjectionAxonometrica)
 		END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -617,7 +619,16 @@ void CEntornVGIView::OnPaint()
 		glViewport(0, 0, w, h);
 
 // Here we do the projective calls for Axonometric View: BEGIN -------------------------
+// Background according to background color
+		if ((c_fons.r < 0.5) || (c_fons.g < 0.5) || (c_fons.b<0.5))
+			FonsB();
+		else
+			FonsN();
 
+		Projeccio_Orto(0,0,w,h, OPV.R);
+		Vista_Esferica(OPV, Vis_Polar, pan, tr_cpv, tr_cpvF, c_fons, col_obj, objecte, mida, pas,
+			oculta, test_vis, back_line, ilumina, llum_ambient, llumGL, textura,
+			textura_map, ifixe, eixos);
 
 
 // Here we do the projective calls for Axonometric View: END -------------------------
@@ -651,7 +662,7 @@ void CEntornVGIView::OnPaint()
 // ----------GMS Environment: YOU MUST COMPLETE WHEN YOU IMPLEMENT ORTHOGRAPHIC VIEW
 // PLANTA (Upper Right)
 // Definition of Viewport, Projection and Camera
-		Projeccio_Orto(w/2, h/2, w/2, h/2);
+		Projeccio_Orto(w/2+1, h/2 + 1, w/2, h/2, OPV.R);
 		Vista_Ortografica(0, OPV.R, c_fons, col_obj, objecte, mida, pas, oculta,
 			test_vis, back_line, ilumina, llum_ambient, llumGL, textura, textura_map, ifixe, eixos);
 
@@ -663,7 +674,7 @@ void CEntornVGIView::OnPaint()
 
 // ALÇAT (Upper Left)
 // Definition of Viewport, Projection and Camera
-		Projeccio_Orto(0, h/2, w/2, h/2);
+		Projeccio_Orto(0, h/2 +1 , w/2, h/2, OPV.R);
 		Vista_Ortografica(1, OPV.R, c_fons, col_obj, objecte, mida, pas, oculta,
 			test_vis, back_line, ilumina, llum_ambient, llumGL, textura, textura_map, ifixe, eixos);
 
@@ -675,7 +686,7 @@ void CEntornVGIView::OnPaint()
 
 // PROFILE (Lower Left)
 // Definition of Viewport, Projection and Camera
-		Projeccio_Orto(0, 0, w / 2, h / 2);
+		Projeccio_Orto(0, 0, w / 2, h / 2, OPV.R);
 		Vista_Ortografica(2, OPV.R, c_fons, col_obj, objecte, mida, pas, oculta,
 			test_vis, back_line, ilumina, llum_ambient, llumGL, textura, textura_map, ifixe, eixos);
 
@@ -687,7 +698,7 @@ void CEntornVGIView::OnPaint()
 
 // ISOMETRIC (Lower Right)
 // Definition of Viewport, Projection and Camera
-		Projeccio_Orto(w/2, 0, w/2, h/2);
+		Projeccio_Orto(w/2+1, 0, w/2, h/2, OPV.R);
 		Vista_Ortografica(3, OPV.R, c_fons, col_obj, objecte, mida, pas, oculta,
 			test_vis, back_line, ilumina, llum_ambient, llumGL, textura, textura_map, ifixe, eixos);
 			
@@ -2490,7 +2501,7 @@ void CEntornVGIView::OnUpdateProjeccioPerspectiva(CCmdUI *pCmdUI)
 		else pCmdUI->SetCheck(0);
 }
 
-
+// PROJECTION: Ortho
 void CEntornVGIView::OnProjectionOrthographics()
 {
 	// TODO: Add your command controller here
@@ -2508,6 +2519,27 @@ void CEntornVGIView::OnUpdateProjectionOrthographics(CCmdUI *pCmdUI)
 	if (projeccio == ORTO) pCmdUI->SetCheck(1);
 	else pCmdUI->SetCheck(0);
 }
+
+
+// PROJECTION: Perspective
+void CEntornVGIView::OnProjectionAxonometrica()
+{
+	// TODO: Add your command controller here
+	projeccio = AXONOM;
+	mobil = true;			zzoom = true;
+
+	// Return to main loop OnPaint() to redraw the scene
+	InvalidateRect(NULL, false);
+}
+
+
+void CEntornVGIView::OnUpdateProjectionAxonometrica(CCmdUI *pCmdUI)
+{
+	// TODO: Agregue aquí su código de controlador de IU para actualización de comandos
+	if (projeccio == AXONOM) pCmdUI->SetCheck(1);
+	else pCmdUI->SetCheck(0);
+}
+
 
 
 
@@ -3396,7 +3428,3 @@ void CEntornVGIView::Refl_MaterialOn()
 	sw_material[2] = sw_material_old[2];
 	sw_material[3] = sw_material_old[3];
 }
-
-
-
-

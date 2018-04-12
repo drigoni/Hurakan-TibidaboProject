@@ -316,6 +316,8 @@ public:
 	afx_msg void OnUpdateObjectHurikan(CCmdUI *pCmdUI);
 	afx_msg void OnProjectionOrthographics();
 	afx_msg void OnUpdateProjectionOrthographics(CCmdUI *pCmdUI);
+	afx_msg void OnProjectionAxonometrica();
+	afx_msg void OnUpdateProjectionAxonometrica(CCmdUI *pCmdUI);
 };
 
 #ifndef _DEBUG  // Versión de depuración en EntornVGIView.cpp

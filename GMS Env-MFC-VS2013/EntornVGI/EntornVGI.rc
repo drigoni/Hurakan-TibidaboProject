@@ -324,6 +324,7 @@ BEGIN
     BEGIN
         MENUITEM "Perspectiva",                 32786, CHECKED
         MENUITEM "Orthographics",               ID_PROJECTION_ORTHOGRAPHICS, CHECKED
+        MENUITEM "Axonometric",                 ID_PROJECTION_AXONOMETRICA, CHECKED
     END
     POPUP "Object"
     BEGIN
