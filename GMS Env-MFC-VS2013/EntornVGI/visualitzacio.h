@@ -14,7 +14,10 @@
 // GMS Environment: Iluminació (Lighting)
 void Iluminacio(char ilumin,bool ifix,bool ll_amb,LLUM lumin,bool textur,char obj,bool bc_lin,int step);
 
-// GMS Environment: orthographic Projection functions;
+// GMS Environment: orthographic Projection, HuraKan functions;
+void Vista_Hurakan(GLfloat Raux, CColor col_fons, CColor col_object, char objecte, GLfloat mida, int step,
+	bool oculta, bool testv, bool bck_ln, char iluminacio, bool llum_amb, LLUM lumi,
+	bool textur, bool textur_map, bool ifix, bool eix);
 void Projeccio_Orto();
 void Vista_Ortografica(int prj,GLfloat Raux,CColor col_fons,CColor col_object,char objecte,GLfloat mida,int step,
 				bool oculta,bool testv,bool bck_ln,char iluminacio,bool llum_amb,LLUM lumi,bool textur,

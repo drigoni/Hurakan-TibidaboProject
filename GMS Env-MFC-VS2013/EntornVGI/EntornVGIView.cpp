@@ -623,16 +623,8 @@ void CEntornVGIView::OnPaint()
 
 		// Definition of Viewport, Projection and Camera
 		Projeccio_Perspectiva(0, 0, w/2, h, OPV.R);
-		if (navega) {
-			Vista_Navega(opvN, false, n, vpv, pan, tr_cpv, tr_cpvF, c_fons, col_obj, objecte, true, pas,
-				oculta, test_vis, back_line, ilumina, llum_ambient, llumGL, textura, textura_map, ifixe, eixos);
-		}
-		else {
-			n[0] = 0;		n[1] = 0;		n[2] = 0;
-			Vista_Esferica(OPV, Vis_Polar, pan, tr_cpv, tr_cpvF, c_fons, col_obj, objecte, mida, pas,
-				oculta, test_vis, back_line, ilumina, llum_ambient, llumGL, textura,
-				textura_map, ifixe, eixos);
-		}
+		Vista_Hurakan(OPV.R, c_fons, col_obj, objecte, mida, pas, oculta,
+			test_vis, back_line, ilumina, llum_ambient, llumGL, textura, textura_map, ifixe, eixos);
 
 
 		// Draw the object or scene
