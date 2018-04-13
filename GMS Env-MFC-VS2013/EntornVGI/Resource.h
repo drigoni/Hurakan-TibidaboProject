@@ -154,13 +154,15 @@
 #define ID_SHADERS_PHONG                32828
 #define ID_VISTA_SATELIT                32829
 #define ID_OBJECT_HURIKAN               32830
+#define ID_PROJECTION_HURAKAN           32831
+#define ID_OBJECT_HURAKAN               32832
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        310
-#define _APS_NEXT_COMMAND_VALUE         32831
+#define _APS_NEXT_COMMAND_VALUE         32833
 #define _APS_NEXT_CONTROL_VALUE         1000
 #define _APS_NEXT_SYMED_VALUE           310
 #endif

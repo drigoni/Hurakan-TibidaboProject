@@ -143,8 +143,10 @@ BEGIN_MESSAGE_MAP(CEntornVGIView, CView)
 	ON_UPDATE_COMMAND_UI(ID_SHADERS_PHONG, &CEntornVGIView::OnUpdateShadersPhong)
 	ON_COMMAND(ID_VISTA_SATELIT, &CEntornVGIView::OnVistaSatelit)
 	ON_UPDATE_COMMAND_UI(ID_VISTA_SATELIT, &CEntornVGIView::OnUpdateVistaSatelit)
-		ON_COMMAND(ID_OBJECT_HURIKAN, &CEntornVGIView::OnObjectHurikan)
-		ON_UPDATE_COMMAND_UI(ID_OBJECT_HURIKAN, &CEntornVGIView::OnUpdateObjectHurikan)
+		ON_COMMAND(ID_PROJECTION_HURAKAN, &CEntornVGIView::OnProjectionHurakan)
+		ON_UPDATE_COMMAND_UI(ID_PROJECTION_HURAKAN, &CEntornVGIView::OnUpdateProjectionHurakan)
+		ON_COMMAND(ID_OBJECT_HURAKAN, &CEntornVGIView::OnObjectHurakan)
+		ON_UPDATE_COMMAND_UI(ID_OBJECT_HURAKAN, &CEntornVGIView::OnUpdateObjectHurakan)
 		END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -605,6 +607,62 @@ void CEntornVGIView::OnPaint()
 // type of projection, controlled by the projeccio variable
 	switch (projeccio)
 	{
+	case HURAKAN:
+		// Switch on Scissor Test
+		glEnable(GL_SCISSOR_TEST);
+
+		// Scissor
+		glScissor(0, 0, w, h);
+		glViewport(0, 0, w, h);
+
+		// Background according to background color
+		if ((c_fons.r < 0.5) || (c_fons.g < 0.5) || (c_fons.b<0.5))
+			FonsB();
+		else
+			FonsN();
+
+		// Definition of Viewport, Projection and Camera
+		Projeccio_Perspectiva(0, 0, w/2, h, OPV.R);
+		if (navega) {
+			Vista_Navega(opvN, false, n, vpv, pan, tr_cpv, tr_cpvF, c_fons, col_obj, objecte, true, pas,
+				oculta, test_vis, back_line, ilumina, llum_ambient, llumGL, textura, textura_map, ifixe, eixos);
+		}
+		else {
+			n[0] = 0;		n[1] = 0;		n[2] = 0;
+			Vista_Esferica(OPV, Vis_Polar, pan, tr_cpv, tr_cpvF, c_fons, col_obj, objecte, mida, pas,
+				oculta, test_vis, back_line, ilumina, llum_ambient, llumGL, textura,
+				textura_map, ifixe, eixos);
+		}
+
+
+		// Draw the object or scene
+		glPushMatrix();
+		configura_Escena();   // To apply Geometrical Transforms according Transform pop up and to configure scene objects
+		dibuixa_Escena();		// Draw scene geometry using OpenGL commands.
+		glPopMatrix();
+
+		// Definition of Viewport, Projection and Camera
+		Projeccio_Perspectiva(w/2+1, 0, w/2, h, OPV.R);
+		if (navega) {
+			Vista_Navega(opvN, false, n, vpv, pan, tr_cpv, tr_cpvF, c_fons, col_obj, objecte, true, pas,
+				oculta, test_vis, back_line, ilumina, llum_ambient, llumGL, textura, textura_map, ifixe, eixos);
+		}
+		else {
+			n[0] = 0;		n[1] = 0;		n[2] = 0;
+			Vista_Esferica(OPV, Vis_Polar, pan, tr_cpv, tr_cpvF, c_fons, col_obj, objecte, mida, pas,
+				oculta, test_vis, back_line, ilumina, llum_ambient, llumGL, textura,
+				textura_map, ifixe, eixos);
+		}
+
+		// Draw the object or scene
+		glPushMatrix();
+		configura_Escena();   // To apply Geometrical Transforms according Transform pop up and to configure scene objects
+		dibuixa_Escena();		// Draw scene geometry using OpenGL commands.
+		glPopMatrix();
+
+		// Swap OpenGL buffer --> Screen Buffer
+		SwapBuffers(m_pDC->GetSafeHdc());
+		break;
 	case AXONOM:
 // AXONOMETRIC VIEW
 // Switch on Scissor Test
@@ -2489,6 +2547,26 @@ void CEntornVGIView::OnUpdateProjeccioPerspectiva(CCmdUI *pCmdUI)
 		else pCmdUI->SetCheck(0);
 }
 
+// PROJECTION: Hurakan
+void CEntornVGIView::OnProjectionHurakan()
+{
+	// TODO: Add your command controller here
+	projeccio = HURAKAN;
+	mobil = true;			zzoom = true;
+
+	// Return to main loop OnPaint() to redraw the scene
+	InvalidateRect(NULL, false);
+}
+
+
+void CEntornVGIView::OnUpdateProjectionHurakan(CCmdUI *pCmdUI)
+{
+	// TODO: Agregue aquí su código de controlador de IU para actualización de comandos
+	if (projeccio == HURAKAN) pCmdUI->SetCheck(1);
+	else pCmdUI->SetCheck(0);
+}
+
+
 
 /* ------------------------------------------------------------------------- */
 /*					5. OBJECT					                             */
@@ -2588,9 +2666,10 @@ void CEntornVGIView::OnUpdateObjecteTruck(CCmdUI *pCmdUI)
 		else pCmdUI->SetCheck(0);
 }
 
-void CEntornVGIView::OnObjectHurikan()
+// OBJECT Hurakan
+void CEntornVGIView::OnObjectHurakan()
 {
-	objecte = HURIKAN;
+	objecte = HURAKAN;
 
 	//	---- Entorn GMS: PAY ATTENTION!!. To change the scale of the object to fit it in the Volume of Visualization (-1,1,-1,1,-1,1) (Orthographic Views)
 
@@ -2601,12 +2680,13 @@ void CEntornVGIView::OnObjectHurikan()
 }
 
 
-void CEntornVGIView::OnUpdateObjectHurikan(CCmdUI *pCmdUI)
+void CEntornVGIView::OnUpdateObjectHurakan(CCmdUI *pCmdUI)
 {
 	// TODO: Agregue aquí su código de controlador de IU para actualización de comandos
-	if (objecte == HURIKAN) pCmdUI->SetCheck(1);
+	if (objecte == HURAKAN) pCmdUI->SetCheck(1);
 	else pCmdUI->SetCheck(0);
 }
+
 
 
 
@@ -3375,6 +3455,5 @@ void CEntornVGIView::Refl_MaterialOn()
 	sw_material[2] = sw_material_old[2];
 	sw_material[3] = sw_material_old[3];
 }
-
 
 

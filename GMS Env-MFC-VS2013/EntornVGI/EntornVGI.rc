@@ -323,6 +323,7 @@ BEGIN
     POPUP "Projection"
     BEGIN
         MENUITEM "Perspectiva",                 32786, CHECKED
+        MENUITEM "Hurakan",                     ID_PROJECTION_HURAKAN, CHECKED
     END
     POPUP "Object"
     BEGIN
@@ -330,7 +331,7 @@ BEGIN
         MENUITEM "Sphere",                      32788, CHECKED
         MENUITEM "Teapot",                      32789, CHECKED
         MENUITEM "Truck",                       32790, CHECKED
-        MENUITEM "Hurikan",                     ID_OBJECT_HURIKAN, CHECKED
+        MENUITEM "Hurakan",                     ID_OBJECT_HURAKAN, CHECKED
     END
     POPUP "Transform"
     BEGIN

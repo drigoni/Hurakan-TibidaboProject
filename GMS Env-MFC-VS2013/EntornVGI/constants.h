@@ -23,7 +23,7 @@
 #define POLARX 'X'
 
 //-------------- GMS: Object os scene types (Object pop up)
-#define HURIKAN 'h'
+#define HURAKAN 'h'
 #define CAMIO 'm'
 #define CILINDER 'y'
 #define CUBE 'c'

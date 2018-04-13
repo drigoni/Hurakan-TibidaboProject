@@ -255,6 +255,7 @@ void Projeccio_Perspectiva(int minx,int miny,GLsizei w,GLsizei h,float zoom)
 
 // Viewport definition
 	glViewport(minx,miny,w,h);
+	glScissor(minx, miny, w, h);
 	if (h==0) h=1;
 
 // Switch on the GL_PROJECTION matrix structure
