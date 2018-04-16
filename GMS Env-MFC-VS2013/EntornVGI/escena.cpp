@@ -925,7 +925,7 @@ void sea(void)
 
 
 // OBJECTE hurikan project
-void hurikan(bool textu, GLuint VTextu[NUM_MAX_TEXTURES], GLfloat angleArm, GLfloat angleSeat)
+void hurikan(bool textu, GLuint VTextu[NUM_MAX_TEXTURES], GLfloat angleArm, GLfloat angleSeat, GLfloat hurakanSize)
 {
 	GLfloat legSizeX = 2.5, legSizeY = 1, legSizeZ = 12;
 	GLfloat armSizeX = 1, armSizeY = 1, armSizeZ = 20;
@@ -935,8 +935,10 @@ void hurikan(bool textu, GLuint VTextu[NUM_MAX_TEXTURES], GLfloat angleArm, GLfl
 	// Color
 	glColor3f(1.0f, 1.0f, 1.0f);
 
-	glPushMatrix();
+	glScalef(hurakanSize, hurakanSize, hurakanSize);
 
+	glPushMatrix();
+		
 		// Rotate the arms and the seat
 		glTranslatef(0.0f, 0.0f, legSizeZ - 0.5f);
 		glRotatef(angleArm, 0.0f, 1.0f, 0.0f);
