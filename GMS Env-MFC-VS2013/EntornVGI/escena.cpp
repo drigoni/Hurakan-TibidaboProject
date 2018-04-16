@@ -9,8 +9,6 @@
 #include "material.h"
 #include "escena.h"
 
-int i = 0, j = 0;
-
 // TEXTURES: Vector texture names
 GLuint texturID[NUM_MAX_TEXTURES] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
 
@@ -25,8 +23,7 @@ void dibuixa_EscenaGL(char objecte, CColor col_object, bool ref_mat, bool sw_mat
 	case HURIKAN:
 		glDisable(GL_TEXTURE_2D);
 		sea();
-		hurikan(textur, texturID, i, j);
-		i++, j++;
+		hurikan(textur, texturID, 0, 0);
 		break;
 
 // Truck drawing
@@ -952,7 +949,7 @@ void hurikan(bool textu, GLuint VTextu[NUM_MAX_TEXTURES], GLfloat angleArm, GLfl
 			glRotatef(angleSeat, 0.0f, 1.0f, 0.0f);
 			glTranslatef(0.0f, 0.0f, -(legSizeZ - armSizeZ/2 + offset) );
 
-			// Seat
+			// Draw the seat
 			glPushMatrix();
 				glTranslatef(0.0f, 0.0f, legSizeZ - armSizeZ/2 + offset);
 				glScalef(seatSizeX, seatSizeY, seatSizeZ);
@@ -961,7 +958,7 @@ void hurikan(bool textu, GLuint VTextu[NUM_MAX_TEXTURES], GLfloat angleArm, GLfl
 
 		glPopMatrix();
 
-		// Two arms
+		// Draw two arms
 		glPushMatrix();
 			glTranslatef(0.0f, 0.0f, legSizeZ - armSizeZ/2 + armSizeZ/2);
 			glPushMatrix();
@@ -990,7 +987,7 @@ void hurikan(bool textu, GLuint VTextu[NUM_MAX_TEXTURES], GLfloat angleArm, GLfl
 
 	glPopMatrix();
 
-	//Two side legs
+	//Draw two legs
 	glPushMatrix();
 		glTranslatef(0.0f, 0.0f, legSizeZ/2);
 		glPushMatrix();
