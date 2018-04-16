@@ -23,7 +23,7 @@ void dibuixa_EscenaGL(char objecte, CColor col_object, bool ref_mat, bool sw_mat
 	case HURAKAN:
 		glDisable(GL_TEXTURE_2D);
 		sea();
-		hurikan(textur, texturID, 0, 0);
+		hurikan(textur, texturID, 0, 0, 10);
 		break;
 
 // Truck drawing
@@ -101,6 +101,7 @@ void dibuixa(char obj)
 	}
 
 }
+
 
 // OBJECTE Truck with texture images if tectxture is switched on
 // Truck: Parameters:
@@ -924,7 +925,7 @@ void sea(void)
 
 
 
-// OBJECTE hurikan project
+// OBJECTE Hurakan project
 void hurikan(bool textu, GLuint VTextu[NUM_MAX_TEXTURES], GLfloat angleArm, GLfloat angleSeat, GLfloat hurakanSize)
 {
 	GLfloat legSizeX = 2.5, legSizeY = 1, legSizeZ = 12;
@@ -991,14 +992,14 @@ void hurikan(bool textu, GLuint VTextu[NUM_MAX_TEXTURES], GLfloat angleArm, GLfl
 
 	//Draw two legs
 	glPushMatrix();
-		glTranslatef(0.0f, 0.0f, legSizeZ/2);
+		glTranslatef(0.0f, 0.0f, legSizeZ / 2);
 		glPushMatrix();
-			glTranslatef(0.0f, seatSizeY/2 + armSizeY + 1.0f + legSizeY/2, 0.0f);
+			glTranslatef(0.0f, seatSizeY / 2 + armSizeY + 1.0f + legSizeY / 2, 0.0f);
 			glScalef(legSizeX, legSizeY, legSizeZ);
 			glutSolidCube(1);
 		glPopMatrix();
 		glPushMatrix();
-			glTranslatef(0.0f, -(seatSizeY/2 + armSizeY + 1.0f + legSizeY/2), 0.0f);
+			glTranslatef(0.0f, -(seatSizeY / 2 + armSizeY + 1.0f + legSizeY / 2), 0.0f);
 			glScalef(legSizeX, legSizeY, legSizeZ);
 			glutSolidCube(1);
 		glPopMatrix();
