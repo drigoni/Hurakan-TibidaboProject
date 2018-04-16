@@ -314,6 +314,10 @@ public:
 	afx_msg void OnUpdateVistaSatelit(CCmdUI *pCmdUI);
 	afx_msg void OnObjectHurikan();
 	afx_msg void OnUpdateObjectHurikan(CCmdUI *pCmdUI);
+	afx_msg void OnProjectionHurakan();
+	afx_msg void OnUpdateProjectionHurakan(CCmdUI *pCmdUI);
+	afx_msg void OnObjectHurakan();
+	afx_msg void OnUpdateObjectHurakan(CCmdUI *pCmdUI);
 };
 
 #ifndef _DEBUG  // Versión de depuración en EntornVGIView.cpp

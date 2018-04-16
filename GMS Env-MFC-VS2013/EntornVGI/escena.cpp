@@ -20,7 +20,7 @@ void dibuixa_EscenaGL(char objecte, CColor col_object, bool ref_mat, bool sw_mat
 	switch (objecte)
 	{
 // Hurikan drawing
-	case HURIKAN:
+	case HURAKAN:
 		glDisable(GL_TEXTURE_2D);
 		sea();
 		hurikan(textur, texturID, 0, 0);
