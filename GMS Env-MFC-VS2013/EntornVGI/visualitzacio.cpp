@@ -200,6 +200,38 @@ void Iluminacio(char ilumin,bool ifix,bool ll_amb,LLUM lumin,bool textur,bool te
 	glEndList();
 }
 
+// Hurakan view
+void Vista_Hurakan(GLfloat Raux, CColor col_fons, CColor col_object, char objecte, GLfloat mida, int step,
+	bool oculta, bool testv, bool bck_ln, char iluminacio, bool llum_amb, LLUM lumi,
+	bool textur, bool textur_map, bool ifix, bool eix)
+{
+
+	// Lighting conditions with light source attached to camera (before gluLookAt)
+	if (!ifix) Iluminacio(iluminacio, ifix, llum_amb, lumi, textur, textur_map, objecte, bck_ln, step);
+
+	gluLookAt(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1, 0.0);
+
+	// Clear the color and depth buffers.
+	Fons(col_fons);
+
+	// Fixed lighting conditions, not attached to camera (after gluLookAt).
+	if (ifix) Iluminacio(iluminacio, ifix, llum_amb, lumi, textur, textur_map, objecte, bck_ln, step);
+
+	// Back face culling according to testv variable.
+	if (testv) glEnable(GL_CULL_FACE);
+	else glDisable(GL_CULL_FACE);
+
+	// Z-buffer hidden surface algorithm according the oculta variable.
+	if (oculta) glEnable(GL_DEPTH_TEST);
+	else glDisable(GL_DEPTH_TEST);
+
+	// To draw back faces as lines according bc_lin variable.
+	if (bck_ln) glPolygonMode(GL_BACK, GL_LINE);
+
+	// To draw the World Coordinates Axes according eix variable. 
+	if (eix) glCallList(EIXOS);
+}
+
 // -------- Entorn GMS: ORTOGRAPHIC VIEW (Projeccio_Orto and Vista_Ortografica functions)
 
 // Projeccio_Orto: Definition of Viewport and glOrtho 
@@ -255,6 +287,7 @@ void Projeccio_Perspectiva(int minx,int miny,GLsizei w,GLsizei h,float zoom)
 
 // Viewport definition
 	glViewport(minx,miny,w,h);
+	glScissor(minx, miny, w, h);
 	if (h==0) h=1;
 
 // Switch on the GL_PROJECTION matrix structure
