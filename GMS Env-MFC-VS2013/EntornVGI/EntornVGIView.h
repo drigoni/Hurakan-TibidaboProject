@@ -148,6 +148,13 @@ public:
 	GLfloat mida;	// Factor d'escala per calcular Volum de Visualització de l'objecte que encaixi.
 	CString nom;	// Nom de fitxer.
 	CString buffer; // Buffer que magatzema string caracters corresponent a variables float a printar en Status Bar (funció Barra_Estat).
+
+// Variables about Hurakan
+	GLfloat hurakanASpeed; // Hurakan average speed
+	GLfloat hurakanEPower; // Hurakan engine power
+	GLfloat hurakanGravity; // Hurakan gravity value
+	int hurikanKeyValue; // Hurakan key value used for change the selected variable. 0 = hurakanASpeed, 1 = hurakanEPower, 2 = hurakanGravity
+
 //--------------VGI Environment: Fi De Variables globals de CEntornVGIView
 
 // Operaciones
@@ -197,6 +204,7 @@ public:
 	void CEntornVGIView::Teclat_TransEscala(UINT nChar, UINT nRepCnt);
 	void CEntornVGIView::Teclat_TransRota(UINT nChar, UINT nRepCnt);
 	void CEntornVGIView::Teclat_TransTraslada(UINT nChar, UINT nRepCnt);
+	void CEntornVGIView::Teclat_Hurakan(UINT nChar, UINT nRepCnt);
 
 	CMFCStatusBar& GetStatusBar() const
 	{
@@ -312,8 +320,6 @@ public:
 	afx_msg void OnUpdateShadersPhong(CCmdUI *pCmdUI);
 	afx_msg void OnVistaSatelit();
 	afx_msg void OnUpdateVistaSatelit(CCmdUI *pCmdUI);
-	afx_msg void OnObjectHurikan();
-	afx_msg void OnUpdateObjectHurikan(CCmdUI *pCmdUI);
 	afx_msg void OnProjectionHurakan();
 	afx_msg void OnUpdateProjectionHurakan(CCmdUI *pCmdUI);
 	afx_msg void OnObjectHurakan();

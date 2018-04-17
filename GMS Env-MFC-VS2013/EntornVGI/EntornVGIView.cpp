@@ -250,6 +250,11 @@ CEntornVGIView::CEntornVGIView()
 	iluInit();					// Inicialize ILU library
 	ilutRenderer(ILUT_OPENGL);	// Inicialize ILUT library for OpenGL
 
+// Hurakan variables
+	hurakanASpeed = 10.0;
+	hurakanEPower = 5;
+	hurakanGravity = 9.807;
+	hurikanKeyValue = 0;
 }
 
 CEntornVGIView::~CEntornVGIView()
@@ -850,9 +855,10 @@ void CEntornVGIView::Barra_Estat()
 
 // Status Bar R- Point of View Origin (camera position)
 	if (projeccio == CAP) buffer = "       ";	
-		else if (projeccio==ORTO) buffer=" ORTO   ";
-			else if (navega) buffer = " NAV   ";
-			else buffer.Format(_T("%.1f"), OPVAux.R);
+	else if (projeccio==ORTO) buffer=" ORTO   ";
+	else if (navega) buffer = " NAV   ";
+	else buffer.Format(_T("%.1f"), OPVAux.R);
+
 	sss = _T("R=") + buffer;
 // Update R position of Status Bar
 	GetStatusBar().SetPaneText(1, sss);
@@ -930,80 +936,105 @@ void CEntornVGIView::Barra_Estat()
 
 // Status Bar to give the Geometrical Transform type (TRAS, ROT, ESC)
 	sss = " ";
-	if (transf) {
-		if (rota) sss = "ROT";
-		else if (trasl) sss = "TRA";
-		else if (escal) sss = "ESC";
+	if (projeccio != HURAKAN) {
+		if (transf) {
+			if (rota) sss = "ROT";
+			else if (trasl) sss = "TRA";
+			else if (escal) sss = "ESC";
+		}
+		else {
+			// Components d'intensitat de fons que varien per teclat
+			if ((fonsR) && (fonsG) && (fonsB)) sss = " RGB";
+			else if ((fonsR) && (fonsG)) sss = " RG ";
+			else if ((fonsR) && (fonsB)) sss = " R   B";
+			else if ((fonsG) && (fonsB)) sss = "   GB";
+			else if (fonsR) sss = " R  ";
+			else if (fonsG) sss = "   G ";
+			else if (fonsB) sss = "      B";
+		}
 	}
 	else {
-		// Components d'intensitat de fons que varien per teclat
-		if ((fonsR) && (fonsG) && (fonsB)) sss = " RGB";
-		else if ((fonsR) && (fonsG)) sss = " RG ";
-		else if ((fonsR) && (fonsB)) sss = " R   B";
-		else if ((fonsG) && (fonsB)) sss = "   GB";
-		else if (fonsR) sss = " R  ";
-		else if (fonsG) sss = "   G ";
-		else if (fonsB) sss = "      B";
+		if (hurikanKeyValue == 0) sss = "S";
+		else if (hurikanKeyValue == 1) sss = "P";
+		else sss = "G";
 	}
 // Update Transformations mode of Status Bar
 	GetStatusBar().SetPaneText(8, sss);
 
 // Status Bar of the parameters of Transform, Color and positions of Robot and human leg.
 	sss = " ";
-	if (transf)
-	{	if (rota)
-		{	buffer.Format(_T("%.1f"), TG.VRota.x);
-			sss = _T("  ") + buffer + _T("   ");
+	if (projeccio != HURAKAN) {
+		if (transf)
+		{
+			if (rota)
+			{
+				buffer.Format(_T("%.1f"), TG.VRota.x);
+				sss = _T("  ") + buffer + _T("   ");
 
-			buffer.Format(_T("%.1f"), TG.VRota.y);
-			sss = sss + buffer + _T("   ");
+				buffer.Format(_T("%.1f"), TG.VRota.y);
+				sss = sss + buffer + _T("   ");
 
-			buffer.Format(_T("%.1f"), TG.VRota.z);
-			sss = sss + buffer;
+				buffer.Format(_T("%.1f"), TG.VRota.z);
+				sss = sss + buffer;
+			}
+			else if (trasl)
+			{
+				buffer.Format(_T("%.1f"), TG.VTras.x);
+				sss = _T("  ") + buffer + _T("   ");
+
+				buffer.Format(_T("%.1f"), TG.VTras.y);
+				sss = sss + buffer + _T("   ");
+
+				buffer.Format(_T("%.1f"), TG.VTras.z);
+				sss = sss + buffer;
+			}
+			else if (escal)
+			{
+				buffer.Format(_T("%.2f"), TG.VScal.x);
+				sss = _T(" ") + buffer + _T("  ");
+
+				buffer.Format(_T("%.2f"), TG.VScal.y);
+				sss = sss + buffer + _T("  ");
+
+				buffer.Format(_T("%.2f"), TG.VScal.x);
+				sss = sss + buffer;
+			}
 		}
-		else if (trasl)
-		{	buffer.Format(_T("%.1f"), TG.VTras.x);
-			sss = _T("  ") + buffer + _T("   ");
+		else {	// Background Color
+			if (!sw_color)
+			{
+				buffer.Format(_T("%.3f"), c_fons.r);
+				sss = _T(" ") + buffer + _T("  ");
 
-			buffer.Format(_T("%.1f"), TG.VTras.y);
-			sss = sss + buffer + _T("   ");
+				buffer.Format(_T("%.3f"), c_fons.g);
+				sss = sss + buffer + _T("  ");
 
-			buffer.Format(_T("%.1f"), TG.VTras.z);
-			sss = sss + buffer;
-		}
-		else if (escal)
-		{	buffer.Format(_T("%.2f"), TG.VScal.x);
-			sss = _T(" ") + buffer + _T("  ");
+				buffer.Format(_T("%.3f"), c_fons.b);
+				sss = sss + buffer;
+			}
+			else
+			{	// Object Color
+				buffer.Format(_T("%.3f"), col_obj.r);
+				sss = _T(" ") + buffer + _T("  ");
 
-			buffer.Format(_T("%.2f"), TG.VScal.y);
-			sss = sss + buffer + _T("  ");
+				buffer.Format(_T("%.3f"), col_obj.g);
+				sss = sss + buffer + _T("  ");
 
-			buffer.Format(_T("%.2f"), TG.VScal.x);
-			sss = sss + buffer;
+				buffer.Format(_T("%.3f"), col_obj.b);
+				sss = sss + buffer;
+			}
 		}
 	}
-	else {	// Background Color
-		if (!sw_color)
-		{	buffer.Format(_T("%.3f"), c_fons.r);
-			sss = _T(" ") + buffer + _T("  ");
+	else {
+		// Hurakan values
+		buffer.Format(_T("%.1f"), hurakanASpeed);
+		sss = _T("   ") + buffer + _T("   ");
 
-			buffer.Format(_T("%.3f"), c_fons.g);
-			sss = sss + buffer + _T("  ");
+		buffer.Format(_T("%.1f"), hurakanEPower);
+		sss = sss + buffer + _T("   ");
 
-			buffer.Format(_T("%.3f"), c_fons.b);
-			sss = sss + buffer;
-		}
-		else
-		{	// Object Color
-			buffer.Format(_T("%.3f"), col_obj.r);
-			sss = _T(" ") + buffer + _T("  ");
-
-			buffer.Format(_T("%.3f"), col_obj.g);
-			sss = sss + buffer + _T("  ");
-
-			buffer.Format(_T("%.3f"), col_obj.b);
-			sss = sss + buffer;
-		}
+		buffer.Format(_T("%.1f"), hurakanGravity);
+		sss = sss + buffer + _T("   ");
 	}
 
 // Update Background or object Color of Status Bar
@@ -1189,19 +1220,26 @@ void CEntornVGIView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 	float modul = 0;
 	GLfloat vdir[3] = { 0, 0, 0 };
 
-	if ((!pan) && (!transf) && (!navega))
-	{
-		if (!sw_color) Teclat_ColorFons(nChar, nRepCnt);
-		else Teclat_ColorObjecte(nChar, nRepCnt);
-	}
-	else {	if (transf)
-			{	if (rota) Teclat_TransRota(nChar, nRepCnt);
-				  else if (trasl) Teclat_TransTraslada(nChar, nRepCnt);
-					else if (escal) Teclat_TransEscala(nChar, nRepCnt);
+	if (projeccio != HURAKAN) {
+		if ((!pan) && (!transf) && (!navega))
+		{
+			if (!sw_color) Teclat_ColorFons(nChar, nRepCnt);
+			else Teclat_ColorObjecte(nChar, nRepCnt);
+		}
+		else {
+			if (transf)
+			{
+				if (rota) Teclat_TransRota(nChar, nRepCnt);
+				else if (trasl) Teclat_TransTraslada(nChar, nRepCnt);
+				else if (escal) Teclat_TransEscala(nChar, nRepCnt);
 			}
 			if (pan) Teclat_Pan(nChar, nRepCnt);
-			 else if (navega) Teclat_Navega(nChar, nRepCnt);
+			else if (navega) Teclat_Navega(nChar, nRepCnt);
 		}
+	}
+	else {
+		Teclat_Hurakan(nChar, nRepCnt);
+	}
 
 // OnPaint() call to redraw the scene
 	InvalidateRect(NULL, false);
@@ -1716,7 +1754,6 @@ void CEntornVGIView::Teclat_TransRota(UINT nChar, UINT nRepCnt)
 	}
 }
 
-
 // Teclat_TransTraslada: Keys to change the translation values for X,Y,Z.
 void CEntornVGIView::Teclat_TransTraslada(UINT nChar, UINT nRepCnt)
 {
@@ -1833,6 +1870,33 @@ void CEntornVGIView::Teclat_TransTraslada(UINT nChar, UINT nRepCnt)
 
 	default:
 		break;
+	}
+}
+
+// Teclat_Hurakan: keys to change the value of hurakanASpeed, hurakanEPower and hurakanGravity
+void CEntornVGIView::Teclat_Hurakan(UINT nChar, UINT nRepCnt) {
+	GLfloat* variable;
+	if (hurikanKeyValue == 0) variable = &hurakanASpeed;
+	else if (hurikanKeyValue == 1) variable = &hurakanEPower;
+	else variable = &hurakanGravity;
+
+	if (nChar == VK_DOWN) {
+		*variable -= 0.1;
+	}
+	else if (nChar == VK_UP) {
+		*variable += 0.1;
+	}
+	else if (nChar == VK_RIGHT) {
+		if (hurikanKeyValue >= 2)
+			hurikanKeyValue = 2;
+		else
+			hurikanKeyValue++;
+	}
+	else if (nChar == VK_LEFT) {
+		if (hurikanKeyValue <= 0)
+			hurikanKeyValue = 0;
+		else
+			hurikanKeyValue--;
 	}
 }
 
