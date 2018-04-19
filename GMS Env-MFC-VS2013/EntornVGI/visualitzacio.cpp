@@ -216,12 +216,13 @@ void Projeccio_Orto(int minx, int miny, GLsizei w, GLsizei h, float zoom)
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 
-	GLfloat ratio = w / h;
+	GLfloat ratio = (float)w / h;
+	float size = 10.0;
 
 	if (ratio >= 1)
-		glOrtho(-10.0 * w / h, 10.0 * w / h, -10, +10, p_near, p_far + zoom);
+		glOrtho(-size * ratio, size * ratio, -10, +10, p_near, p_far + zoom);
 	else
-		glOrtho(-10, 10, -10.0 / ((float)w / h), 10.0 /((float)w / h), p_near, p_far + zoom);
+		glOrtho(-10, 10, -size / ratio, size / ratio, p_near, p_far + zoom);
 
 	// Switch on the GL_MODELVIEW matrix structure
 	glMatrixMode(GL_MODELVIEW);
