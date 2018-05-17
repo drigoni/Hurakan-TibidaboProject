@@ -153,7 +153,8 @@ public:
 	GLfloat hurakanASpeed; // Hurakan average speed
 	GLfloat hurakanEPower; // Hurakan engine power
 	GLfloat hurakanGravity; // Hurakan gravity value
-	int hurikanKeyValue; // Hurakan key value used for change the selected variable. 0 = hurakanASpeed, 1 = hurakanEPower, 2 = hurakanGravity
+	int hurakanKeyValue; // Hurakan key value used for change the selected variable. 0 = hurakanASpeed, 1 = hurakanEPower, 2 = hurakanGravity
+	int hurakanViewMode; // View mode. 0 = both, 1 = Inside Hurakan, 2 = Perspective
 
 //--------------VGI Environment: Fi De Variables globals de CEntornVGIView
 
