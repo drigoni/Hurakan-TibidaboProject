@@ -19,11 +19,9 @@ void dibuixa_EscenaGL(char objecte, CColor col_object, bool ref_mat, bool sw_mat
 
 	switch (objecte)
 	{
-// Hurikan drawing
+// Hurakan drawing
 	case HURAKAN:
-		glDisable(GL_TEXTURE_2D);
-		sea();
-		hurikan(textur, texturID, 0, 0, 10);
+		hurakan(textur, texturID, 0, 0, 10);
 		break;
 
 // Truck drawing
@@ -926,82 +924,113 @@ void sea(void)
 
 
 // OBJECTE Hurakan project
-void hurikan(bool textu, GLuint VTextu[NUM_MAX_TEXTURES], GLfloat angleArm, GLfloat angleSeat, GLfloat hurakanSize)
+void hurakan(bool textu, GLuint VTextu[NUM_MAX_TEXTURES], GLfloat angleArm, GLfloat angleSeat, GLfloat hurakanSize)
 {
 	GLfloat legSizeX = 2.5, legSizeY = 1, legSizeZ = 12;
 	GLfloat armSizeX = 1, armSizeY = 1, armSizeZ = 20;
 	GLfloat seatSizeX = 3, seatSizeY = 16, seatSizeZ = 1.5;
 	GLfloat offset = 0.5;
 
-	// Color
-	glColor3f(1.0f, 1.0f, 1.0f);
-
-	glScalef(hurakanSize, hurakanSize, hurakanSize);
-
 	glPushMatrix();
-		
-		// Rotate the arms and the seat
-		glTranslatef(0.0f, 0.0f, legSizeZ - 0.5f);
-		glRotatef(angleArm, 0.0f, 1.0f, 0.0f);
-		glTranslatef(0.0f, 0.0f, -(legSizeZ - 0.5f) );
-
+		glRotatef(270.0, 0.0, 1.0, 0.0);
+		glTranslatef(-25.0f, 0.0f, 0.0f);
+		//Hemisphere
 		glPushMatrix();
-
-			// Rotate the seat
-			glTranslatef(0.0f, 0.0f, legSizeZ - armSizeZ/2 + offset);
-			glRotatef(angleSeat, 0.0f, 1.0f, 0.0f);
-			glTranslatef(0.0f, 0.0f, -(legSizeZ - armSizeZ/2 + offset) );
-
-			// Draw the seat
+			glColor3f(1.0, 1.0, 1.0);
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+			glEnable(GL_BLEND);
 			glPushMatrix();
+				//glRotatef(90.0, 0.0, 0.0, 0.0);
+				glBindTexture(GL_TEXTURE_2D, texturID[1]);
+				hemisphere(1000.0, 500, 500);
+			glPopMatrix();
+			glBindTexture(GL_TEXTURE_2D, texturID[1]);
+			glPushMatrix();
+				glTranslatef(25.0f, 0.0f, 0.0f);
+				glScalef(0.001f, 5000.0f, 3000.0f);
+				glutSolidCube(1.0);
+			glPopMatrix();
+		glPopMatrix();
+	glPopMatrix();
+	
+
+	
+	//Hurakan structure
+	glPushMatrix();
+		// Color
+		glColor3f(1.0f, 1.0f, 1.0f);
+
+		glTranslatef(0.0f, 1.0f, 0.0f);
+		glScalef(hurakanSize, hurakanSize, hurakanSize);
+		glPushMatrix();
+		
+			// Rotate the arms and the seat
+			glTranslatef(0.0f, 0.0f, legSizeZ - 0.5f);
+			glRotatef(angleArm, 0.0f, 1.0f, 0.0f);
+			glTranslatef(0.0f, 0.0f, -(legSizeZ - 0.5f) );
+
+			glPushMatrix();
+
+				// Rotate the seat
 				glTranslatef(0.0f, 0.0f, legSizeZ - armSizeZ/2 + offset);
-				glScalef(seatSizeX, seatSizeY, seatSizeZ);
+				glRotatef(angleSeat, 0.0f, 1.0f, 0.0f);
+				glTranslatef(0.0f, 0.0f, -(legSizeZ - armSizeZ/2 + offset) );
+
+				// Draw the seat
+				glPushMatrix();
+					glTranslatef(0.0f, 0.0f, legSizeZ - armSizeZ/2 + offset);
+					glScalef(seatSizeX, seatSizeY, seatSizeZ);
+					glutSolidCube(1);
+				glPopMatrix();
+
+			glPopMatrix();
+
+			// Draw two arms
+			glPushMatrix();
+				glTranslatef(0.0f, 0.0f, legSizeZ - armSizeZ/2 + armSizeZ/2);
+				glPushMatrix();
+					glTranslatef(0.0f, -(armSizeY/2 + seatSizeY/2), 0.0f);
+					glPushMatrix();
+						glTranslatef(0.0f, -(armSizeY/2 + 0.5f), -0.5f);
+						glutSolidCube(1);
+					glPopMatrix();
+					glPushMatrix();
+						glScalef(armSizeX, armSizeY, armSizeZ);
+						glutSolidCube(1);
+					glPopMatrix();
+				glPopMatrix();
+				glPushMatrix();
+					glTranslatef(0.0f, armSizeY/2 + seatSizeY/2, 0.0f);
+					glPushMatrix();
+						glTranslatef(0.0f, armSizeY/2 + 0.5f, -0.5f);
+						glutSolidCube(1);
+					glPopMatrix();
+					glPushMatrix();
+						glScalef(armSizeX, armSizeY, armSizeZ);
+						glutSolidCube(1);
+					glPopMatrix();
+				glPopMatrix();
+			glPopMatrix();
+
+		glPopMatrix();
+
+		//Draw two legs
+		glPushMatrix();
+			glTranslatef(0.0f, 0.0f, legSizeZ / 2);
+			glPushMatrix();
+				glTranslatef(0.0f, seatSizeY / 2 + armSizeY + 1.0f + legSizeY / 2, 0.0f);
+				glScalef(legSizeX, legSizeY, legSizeZ);
 				glutSolidCube(1);
 			glPopMatrix();
-
-		glPopMatrix();
-
-		// Draw two arms
-		glPushMatrix();
-			glTranslatef(0.0f, 0.0f, legSizeZ - armSizeZ/2 + armSizeZ/2);
 			glPushMatrix();
-				glTranslatef(0.0f, -(armSizeY/2 + seatSizeY/2), 0.0f);
-				glPushMatrix();
-					glTranslatef(0.0f, -(armSizeY/2 + 0.5f), -0.5f);
-					glutSolidCube(1);
-				glPopMatrix();
-				glPushMatrix();
-					glScalef(armSizeX, armSizeY, armSizeZ);
-					glutSolidCube(1);
-				glPopMatrix();
-			glPopMatrix();
-			glPushMatrix();
-				glTranslatef(0.0f, armSizeY/2 + seatSizeY/2, 0.0f);
-				glPushMatrix();
-					glTranslatef(0.0f, armSizeY/2 + 0.5f, -0.5f);
-					glutSolidCube(1);
-				glPopMatrix();
-				glPushMatrix();
-					glScalef(armSizeX, armSizeY, armSizeZ);
-					glutSolidCube(1);
-				glPopMatrix();
+				glTranslatef(0.0f, -(seatSizeY / 2 + armSizeY + 1.0f + legSizeY / 2), 0.0f);
+				glScalef(legSizeX, legSizeY, legSizeZ);
+				glutSolidCube(1);
 			glPopMatrix();
 		glPopMatrix();
-
 	glPopMatrix();
+	
 
-	//Draw two legs
-	glPushMatrix();
-		glTranslatef(0.0f, 0.0f, legSizeZ / 2);
-		glPushMatrix();
-			glTranslatef(0.0f, seatSizeY / 2 + armSizeY + 1.0f + legSizeY / 2, 0.0f);
-			glScalef(legSizeX, legSizeY, legSizeZ);
-			glutSolidCube(1);
-		glPopMatrix();
-		glPushMatrix();
-			glTranslatef(0.0f, -(seatSizeY / 2 + armSizeY + 1.0f + legSizeY / 2), 0.0f);
-			glScalef(legSizeX, legSizeY, legSizeZ);
-			glutSolidCube(1);
-		glPopMatrix();
-	glPopMatrix();
+
+
 }

@@ -254,7 +254,8 @@ CEntornVGIView::CEntornVGIView()
 	hurakanASpeed = 10.0;
 	hurakanEPower = 5;
 	hurakanGravity = 9.807;
-	hurikanKeyValue = 0;
+	hurakanKeyValue = 0;
+	hurakanViewMode = 0;
 }
 
 CEntornVGIView::~CEntornVGIView()
@@ -626,36 +627,71 @@ void CEntornVGIView::OnPaint()
 		else
 			FonsN();
 
-		// Definition of Viewport, Projection and Camera
-		Projeccio_Perspectiva(0, 0, w/2, h, OPV.R);
-		Vista_Hurakan(OPV.R, c_fons, col_obj, objecte, mida, pas, oculta,
-			test_vis, back_line, ilumina, llum_ambient, llumGL, textura, textura_map, ifixe, eixos);
+		if (hurakanViewMode == 0) {
+			// Definition of Viewport, Projection and Camera
+			Projeccio_Perspectiva(0, 0, w / 2, h, OPV.R);
+			Vista_Hurakan(OPV.R, c_fons, col_obj, objecte, mida, pas, oculta,
+				test_vis, back_line, ilumina, llum_ambient, llumGL, textura, textura_map, ifixe, eixos);
 
 
-		// Draw the object or scene
-		glPushMatrix();
-		configura_Escena();   // To apply Geometrical Transforms according Transform pop up and to configure scene objects
-		dibuixa_Escena();		// Draw scene geometry using OpenGL commands.
-		glPopMatrix();
+			// Draw the object or scene
+			glPushMatrix();
+			configura_Escena();   // To apply Geometrical Transforms according Transform pop up and to configure scene objects
+			dibuixa_Escena();		// Draw scene geometry using OpenGL commands.
+			glPopMatrix();
 
-		// Definition of Viewport, Projection and Camera
-		Projeccio_Perspectiva(w/2+1, 0, w/2, h, OPV.R);
-		if (navega) {
-			Vista_Navega(opvN, false, n, vpv, pan, tr_cpv, tr_cpvF, c_fons, col_obj, objecte, true, pas,
-				oculta, test_vis, back_line, ilumina, llum_ambient, llumGL, textura, textura_map, ifixe, eixos);
+			// Definition of Viewport, Projection and Camera
+			Projeccio_Perspectiva(w / 2 + 1, 0, w / 2, h, OPV.R);
+			if (navega) {
+				Vista_Navega(opvN, false, n, vpv, pan, tr_cpv, tr_cpvF, c_fons, col_obj, objecte, true, pas,
+					oculta, test_vis, back_line, ilumina, llum_ambient, llumGL, textura, textura_map, ifixe, eixos);
+			}
+			else {
+				n[0] = 0;		n[1] = 0;		n[2] = 0;
+				Vista_Esferica(OPV, Vis_Polar, pan, tr_cpv, tr_cpvF, c_fons, col_obj, objecte, mida, pas,
+					oculta, test_vis, back_line, ilumina, llum_ambient, llumGL, textura,
+					textura_map, ifixe, eixos);
+			}
+
+			// Draw the object or scene
+			glPushMatrix();
+			configura_Escena();   // To apply Geometrical Transforms according Transform pop up and to configure scene objects
+			dibuixa_Escena();		// Draw scene geometry using OpenGL commands.
+			glPopMatrix();
 		}
-		else {
-			n[0] = 0;		n[1] = 0;		n[2] = 0;
-			Vista_Esferica(OPV, Vis_Polar, pan, tr_cpv, tr_cpvF, c_fons, col_obj, objecte, mida, pas,
-				oculta, test_vis, back_line, ilumina, llum_ambient, llumGL, textura,
-				textura_map, ifixe, eixos);
-		}
+		else if (hurakanViewMode == 1) {
+			// Definition of Viewport, Projection and Camera
+			Projeccio_Perspectiva(0, 0, w, h, OPV.R);
+			Vista_Hurakan(OPV.R, c_fons, col_obj, objecte, mida, pas, oculta,
+				test_vis, back_line, ilumina, llum_ambient, llumGL, textura, textura_map, ifixe, eixos);
 
-		// Draw the object or scene
-		glPushMatrix();
-		configura_Escena();   // To apply Geometrical Transforms according Transform pop up and to configure scene objects
-		dibuixa_Escena();		// Draw scene geometry using OpenGL commands.
-		glPopMatrix();
+
+			// Draw the object or scene
+			glPushMatrix();
+			configura_Escena();   // To apply Geometrical Transforms according Transform pop up and to configure scene objects
+			dibuixa_Escena();		// Draw scene geometry using OpenGL commands.
+			glPopMatrix();
+		}
+		else if (hurakanViewMode == 2) {
+			// Definition of Viewport, Projection and Camera
+			Projeccio_Perspectiva(0, 0, w, h, OPV.R);
+			if (navega) {
+				Vista_Navega(opvN, false, n, vpv, pan, tr_cpv, tr_cpvF, c_fons, col_obj, objecte, true, pas,
+					oculta, test_vis, back_line, ilumina, llum_ambient, llumGL, textura, textura_map, ifixe, eixos);
+			}
+			else {
+				n[0] = 0;		n[1] = 0;		n[2] = 0;
+				Vista_Esferica(OPV, Vis_Polar, pan, tr_cpv, tr_cpvF, c_fons, col_obj, objecte, mida, pas,
+					oculta, test_vis, back_line, ilumina, llum_ambient, llumGL, textura,
+					textura_map, ifixe, eixos);
+			}
+
+			// Draw the object or scene
+			glPushMatrix();
+			configura_Escena();   // To apply Geometrical Transforms according Transform pop up and to configure scene objects
+			dibuixa_Escena();		// Draw scene geometry using OpenGL commands.
+			glPopMatrix();
+		}
 
 		// Swap OpenGL buffer --> Screen Buffer
 		SwapBuffers(m_pDC->GetSafeHdc());
@@ -954,8 +990,8 @@ void CEntornVGIView::Barra_Estat()
 		}
 	}
 	else {
-		if (hurikanKeyValue == 0) sss = "S";
-		else if (hurikanKeyValue == 1) sss = "P";
+		if (hurakanKeyValue == 0) sss = "S";
+		else if (hurakanKeyValue == 1) sss = "P";
 		else sss = "G";
 	}
 // Update Transformations mode of Status Bar
@@ -1876,8 +1912,8 @@ void CEntornVGIView::Teclat_TransTraslada(UINT nChar, UINT nRepCnt)
 // Teclat_Hurakan: keys to change the value of hurakanASpeed, hurakanEPower and hurakanGravity
 void CEntornVGIView::Teclat_Hurakan(UINT nChar, UINT nRepCnt) {
 	GLfloat* variable;
-	if (hurikanKeyValue == 0) variable = &hurakanASpeed;
-	else if (hurikanKeyValue == 1) variable = &hurakanEPower;
+	if (hurakanKeyValue == 0) variable = &hurakanASpeed;
+	else if (hurakanKeyValue == 1) variable = &hurakanEPower;
 	else variable = &hurakanGravity;
 
 	if (nChar == VK_DOWN) {
@@ -1887,17 +1923,26 @@ void CEntornVGIView::Teclat_Hurakan(UINT nChar, UINT nRepCnt) {
 		*variable += 0.1;
 	}
 	else if (nChar == VK_RIGHT) {
-		if (hurikanKeyValue >= 2)
-			hurikanKeyValue = 2;
+		if (hurakanKeyValue >= 2)
+			hurakanKeyValue = 2;
 		else
-			hurikanKeyValue++;
+			hurakanKeyValue++;
 	}
 	else if (nChar == VK_LEFT) {
-		if (hurikanKeyValue <= 0)
-			hurikanKeyValue = 0;
+		if (hurakanKeyValue <= 0)
+			hurakanKeyValue = 0;
 		else
-			hurikanKeyValue--;
+			hurakanKeyValue--;
 	}
+
+	if (nChar == VK_SPACE) {
+		hurakanViewMode++;
+		if (hurakanViewMode > 2) {
+			hurakanViewMode = 0;
+		}
+	}
+
+
 }
 
 /* ------------------------------------------------------------------------- */
@@ -1991,8 +2036,15 @@ void CEntornVGIView::OnMouseMove(UINT nFlags, CPoint point)
 		OPV.alfa = OPV.alfa + gir.cy / 2;
 
 // GMS Environment: Control per evitar el creixement desmesurat dels angles.
-		if (OPV.alfa >= 360)	OPV.alfa = OPV.alfa - 360;
-		if (OPV.alfa<0)		OPV.alfa = OPV.alfa + 360;
+		if (projeccio == HURAKAN) {
+			if (OPV.alfa >= 170)	OPV.alfa = 170;
+			if (OPV.alfa < 10)		OPV.alfa = 10;
+		}
+		else {
+			if (OPV.alfa >= 180)	OPV.alfa = OPV.alfa - 360;
+			if (OPV.alfa<0)		OPV.alfa = OPV.alfa + 360;
+		}
+		
 		if (OPV.beta >= 360)	OPV.beta = OPV.beta - 360;
 		if (OPV.beta<0)		OPV.beta = OPV.beta + 360;
 		InvalidateRect(NULL, false);
@@ -2608,7 +2660,39 @@ void CEntornVGIView::OnProjectionHurakan()
 {
 	// TODO: Add your command controller here
 	projeccio = HURAKAN;
-	mobil = true;			zzoom = true;
+	mobil = true;			
+	zzoom = false;
+	textura = true;
+
+	ilumina = GOURAUD;
+	test_vis = false;		oculta = true;
+
+	OPV.R = 500;
+	OPV.alfa = 45;
+
+	// Switch on OpenGL context (from this point OpenGL commands are accepted)
+	wglMakeCurrent(m_pDC->GetSafeHdc(), m_hRC);
+
+	loadIMA("./textures/brick.jpg", 1);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+
+	loadIMA("./textures/roca.jpg", 2);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+
+	// Switch off OpenGL context (from this point accept OpenGL commands are'nt accepted)
+	wglMakeCurrent(m_pDC->GetSafeHdc(), m_hRC);
 
 	// Return to main loop OnPaint() to redraw the scene
 	InvalidateRect(NULL, false);
