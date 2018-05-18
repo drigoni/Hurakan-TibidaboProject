@@ -251,11 +251,13 @@ CEntornVGIView::CEntornVGIView()
 	ilutRenderer(ILUT_OPENGL);	// Inicialize ILUT library for OpenGL
 
 // Hurakan variables
-	hurakanASpeed = 10.0;
+	hurakanASpeed = 0.0;
 	hurakanEPower = 5;
 	hurakanGravity = 9.807;
 	hurakanKeyValue = 0;
 	hurakanViewMode = 0;
+	hurakanStatus = false;
+	hurakanMaterial = 0;
 }
 
 CEntornVGIView::~CEntornVGIView()
@@ -990,9 +992,9 @@ void CEntornVGIView::Barra_Estat()
 		}
 	}
 	else {
-		if (hurakanKeyValue == 0) sss = "S";
-		else if (hurakanKeyValue == 1) sss = "P";
-		else sss = "G";
+		if (hurakanKeyValue == 0) sss = "Pgms";
+		else if (hurakanKeyValue == 1) sss = "pGms";
+		else sss = "pgMs";
 	}
 // Update Transformations mode of Status Bar
 	GetStatusBar().SetPaneText(8, sss);
@@ -1063,13 +1065,19 @@ void CEntornVGIView::Barra_Estat()
 	}
 	else {
 		// Hurakan values
-		buffer.Format(_T("%.1f"), hurakanASpeed);
+		buffer.Format(_T("%.1f"), hurakanEPower);
 		sss = _T("   ") + buffer + _T("   ");
 
-		buffer.Format(_T("%.1f"), hurakanEPower);
+		buffer.Format(_T("%.1f"), hurakanGravity);
 		sss = sss + buffer + _T("   ");
 
-		buffer.Format(_T("%.1f"), hurakanGravity);
+		buffer.Format(_T("%i"), hurakanMaterial);
+		sss = sss + buffer + _T("   ");
+
+		GLfloat tmp = round(hurakanASpeed * 10.0)/10.0;
+		if (tmp >= 100) tmp = 99.9;
+		else if (tmp <= -100) tmp = -99.9;
+		buffer.Format(_T("%.1f"), tmp);
 		sss = sss + buffer + _T("   ");
 	}
 
@@ -1911,35 +1919,79 @@ void CEntornVGIView::Teclat_TransTraslada(UINT nChar, UINT nRepCnt)
 
 // Teclat_Hurakan: keys to change the value of hurakanASpeed, hurakanEPower and hurakanGravity
 void CEntornVGIView::Teclat_Hurakan(UINT nChar, UINT nRepCnt) {
-	GLfloat* variable;
-	if (hurakanKeyValue == 0) variable = &hurakanASpeed;
-	else if (hurakanKeyValue == 1) variable = &hurakanEPower;
-	else variable = &hurakanGravity;
 
-	if (nChar == VK_DOWN) {
-		*variable -= 0.1;
-	}
-	else if (nChar == VK_UP) {
-		*variable += 0.1;
-	}
-	else if (nChar == VK_RIGHT) {
-		if (hurakanKeyValue >= 2)
+	// Chosing the variable
+	if (nChar == VK_RIGHT) {
+		if (hurakanKeyValue > 2)
 			hurakanKeyValue = 2;
 		else
 			hurakanKeyValue++;
 	}
 	else if (nChar == VK_LEFT) {
-		if (hurakanKeyValue <= 0)
+		if (hurakanKeyValue < 0)
 			hurakanKeyValue = 0;
 		else
 			hurakanKeyValue--;
 	}
 
+	// increment or decrement the value
+	if (nChar == VK_UP) {
+		switch (hurakanKeyValue)
+		{
+		case 0: {
+			hurakanEPower += 0.1;
+		}break;
+		case 1: {
+			hurakanGravity += 0.1;
+		}break;
+		case 2: {
+			hurakanMaterial++;
+		}break;
+		}
+	}
+	else if(nChar == VK_DOWN) {
+		switch (hurakanKeyValue)
+		{
+		case 0: {
+			hurakanEPower -= 0.1;
+		}break;
+		case 1: {
+			hurakanGravity -= 0.1;
+		}break;
+		case 2: {
+			hurakanMaterial--;
+		}break;
+		}
+	}
+
+	// adjust the bounds
+	if (hurakanEPower > 100)
+		hurakanEPower = 100;
+	else if (hurakanEPower < 0)
+		hurakanEPower = 0;
+
+	if (hurakanGravity > 100)
+		hurakanGravity = 100;
+	else if (hurakanGravity < 0)
+		hurakanGravity = 0;
+
+	if (hurakanMaterial > 4)
+		hurakanMaterial = 4;
+	else if (hurakanMaterial < 0)
+		hurakanMaterial = 0;
+
+
+	// Change the view in the screen
 	if (nChar == VK_SPACE) {
 		hurakanViewMode++;
 		if (hurakanViewMode > 2) {
 			hurakanViewMode = 0;
 		}
+	}
+
+	// Change the status of the hurakan
+	if (nChar == VK_RETURN) {
+		hurakanStatus = !hurakanStatus;
 	}
 
 
