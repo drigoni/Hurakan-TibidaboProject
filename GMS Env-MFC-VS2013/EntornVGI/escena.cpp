@@ -1028,6 +1028,13 @@ void hurakan(bool textu, GLuint VTextu[NUM_MAX_TEXTURES], GLfloat angleArm, GLfl
 				glutSolidCube(1);
 			glPopMatrix();
 		glPopMatrix();
+
+		//Draw cube
+		glPushMatrix();
+			glTranslatef(0.0, 0.0, 0.5f);
+			glScalef(legSizeX + 20, 2 * (legSizeY + armSizeZ) + seatSizeY + 5, 1);
+			glutSolidCube(1);
+		glPopMatrix();
 	glPopMatrix();
 	
 

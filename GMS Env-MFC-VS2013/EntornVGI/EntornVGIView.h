@@ -150,11 +150,13 @@ public:
 	CString buffer; // Buffer que magatzema string caracters corresponent a variables float a printar en Status Bar (funció Barra_Estat).
 
 // Variables about Hurakan
-	GLfloat hurakanASpeed; // Hurakan average speed
+	GLfloat hurakanASpeed; // Hurakan average speed calculated by the function of the hurakan engine
 	GLfloat hurakanEPower; // Hurakan engine power
 	GLfloat hurakanGravity; // Hurakan gravity value
-	int hurakanKeyValue; // Hurakan key value used for change the selected variable. 0 = hurakanASpeed, 1 = hurakanEPower, 2 = hurakanGravity
+	int hurakanKeyValue; // Hurakan key value used for change the selected variable. 0 = hurakanEPower, 1 = hurakanGravity, 2 = hurakanMaterial
 	int hurakanViewMode; // View mode. 0 = both, 1 = Inside Hurakan, 2 = Perspective
+	bool hurakanStatus; // Represent the status of the hurikan. FALSE = Stopped, TRUE = Activate
+	int hurakanMaterial; // Represent the current material
 
 //--------------VGI Environment: Fi De Variables globals de CEntornVGIView
 
