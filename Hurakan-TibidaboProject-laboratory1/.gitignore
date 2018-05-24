@@ -1,0 +1,29 @@
+#--------------------------------------------------------------
+#--------------------- OS Generated Files ---------------------
+#--------------------------------------------------------------
+
+
+# Extensions
+*.exe
+*._*
+*.lastbuildstate
+*.aps
+*.vcxproj.user
+
+
+# Folders
+GMS Env-MFC-VS2013/EntornVGI/Debug/*
+GMS Env-MFC-VS2013/Debug/*
+GMS Env-MFC-VS2013/Release/*
+GMS Env-MFC-VS2013/.vs/*
+
+# Directory files
+GMS Env-MFC-VS2013/.DS_Store
+GMS Env-MFC-VS2013/.DS_Store?
+GMS Env-MFC-VS2013/.Spotlight-V100
+GMS Env-MFC-VS2013/.Trashes
+GMS Env-MFC-VS2013/ehthumbs.db
+GMS Env-MFC-VS2013/Thumbs.db
+
+
+
