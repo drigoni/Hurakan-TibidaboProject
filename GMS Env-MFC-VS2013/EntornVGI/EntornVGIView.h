@@ -155,6 +155,7 @@ public:
 	int i = 1;
 	int N = 50;
 	int iDirection = 0;
+	bool pause = false;
 
 // Operaciones
 public:

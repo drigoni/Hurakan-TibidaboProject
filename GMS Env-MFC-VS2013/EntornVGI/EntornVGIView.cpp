@@ -1433,6 +1433,15 @@ void CEntornVGIView::Teclat_Robot(UINT nChar, UINT nRepCnt)
 		SetTimer(WM_TIMER, 4, NULL);
 	}
 
+	if (anima == true) {
+		if (nChar == VK_PAUSE) {
+			pause = !pause;
+		}
+	}
+	else {
+		pause = false;
+	}
+
 	if (nChar == VK_SPACE) {
 		if (increase == 0) {
 			increase = 1;
@@ -2229,7 +2238,7 @@ void CEntornVGIView::OnTimer(UINT_PTR nIDEvent)
 {
 
 // TODO: Add your message handler code here and/or call default
-	if (anima)	{
+	if (anima && !pause)	{
 		counter = (float)i / (float)N;
 		// Message handler of animation when n ms. have occurred
 		elbowz = aezi + counter * (aezf - aezi);
