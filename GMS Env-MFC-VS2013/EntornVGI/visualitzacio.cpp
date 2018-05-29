@@ -208,8 +208,27 @@ void Vista_Hurakan(GLfloat Raux, CColor col_fons, CColor col_object, char object
 
 	// Lighting conditions with light source attached to camera (before gluLookAt)
 	if (!ifix) Iluminacio(iluminacio, ifix, llum_amb, lumi, textur, textur_map, objecte, bck_ln, step);
+	// calculate the position of the sit and use these coordinates to put the camera 1-3
+	double aArm = -((2*pi * fmod(angleArm + 270, 360) / 360.0f) - pi);
+	double xArm = (armSizeZ /2) * hurakanSize * cos(aArm);
+	double zArm = (armSizeZ /2) * hurakanSize * sin(aArm);
+	zArm += (legSizeZ + offset) * hurakanSize;
 
-	gluLookAt(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1, 0.0);
+	double aSeat = -((2 * pi * fmod(angleSeat + 270, 360) / 360.0f) - pi);
+	double xSeat = seatSizeZ * hurakanSize * cos(aSeat);
+	double zSeat = seatSizeZ * hurakanSize * sin(aSeat);
+	double x = xArm + xSeat;
+	double z = zArm + zSeat;
+	
+	//houw to watch
+	//int sign = 1;
+	//if (aSeat < 0)
+	//	sign = 1;
+	double xEye = radiusSky * cos(aSeat);
+	double zEye = radiusSky * sin(aSeat);
+
+	// min 1 or plus 1 the last value
+	gluLookAt(x, 0.0, z, xEye, 0.0, zEye, 0.0, 0.0, 1);
 
 	// Clear the color and depth buffers.
 	Fons(col_fons);

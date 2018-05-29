@@ -9,6 +9,15 @@
 #include "material.h"
 #include "escena.h"
 
+
+// FOrmula  to find angle considering radius 
+GLfloat legSizeX = 2.5, legSizeY = 1, legSizeZ = 12;
+GLfloat armSizeX = 1, armSizeY = 1, armSizeZ = 20;
+GLfloat seatSizeX = 3, seatSizeY = 16, seatSizeZ = 1.5;
+GLfloat offset = 0.5;
+GLfloat angleArm = 0.0f, angleSeat = 0.0f, hurakanSize = 10.0f;
+GLfloat radiusSky = 1000.0f;
+
 // TEXTURES: Vector texture names
 GLuint texturID[NUM_MAX_TEXTURES] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
 
@@ -21,7 +30,7 @@ void dibuixa_EscenaGL(char objecte, CColor col_object, bool ref_mat, bool sw_mat
 	{
 // Hurakan drawing
 	case HURAKAN:
-		hurakan(textur, texturID, 0, 0, 10);
+		hurakan(textur, texturID);
 		break;
 
 // Truck drawing
@@ -924,13 +933,8 @@ void sea(void)
 
 
 // OBJECTE Hurakan project
-void hurakan(bool textu, GLuint VTextu[NUM_MAX_TEXTURES], GLfloat angleArm, GLfloat angleSeat, GLfloat hurakanSize)
+void hurakan(bool textu, GLuint VTextu[NUM_MAX_TEXTURES])
 {
-	GLfloat legSizeX = 2.5, legSizeY = 1, legSizeZ = 12;
-	GLfloat armSizeX = 1, armSizeY = 1, armSizeZ = 20;
-	GLfloat seatSizeX = 3, seatSizeY = 16, seatSizeZ = 1.5;
-	GLfloat offset = 0.5;
-
 	glPushMatrix();
 		glRotatef(270.0, 0.0, 1.0, 0.0);
 		glTranslatef(-25.0f, 0.0f, 0.0f);
@@ -942,7 +946,7 @@ void hurakan(bool textu, GLuint VTextu[NUM_MAX_TEXTURES], GLfloat angleArm, GLfl
 			glPushMatrix();
 				//glRotatef(90.0, 0.0, 0.0, 0.0);
 				glBindTexture(GL_TEXTURE_2D, texturID[1]);
-				hemisphere(1000.0, 500, 500);
+				hemisphere(radiusSky, 500, 500);
 			glPopMatrix();
 			glBindTexture(GL_TEXTURE_2D, texturID[1]);
 			glPushMatrix();
@@ -965,9 +969,9 @@ void hurakan(bool textu, GLuint VTextu[NUM_MAX_TEXTURES], GLfloat angleArm, GLfl
 		glPushMatrix();
 		
 			// Rotate the arms and the seat
-			glTranslatef(0.0f, 0.0f, legSizeZ - 0.5f);
+			glTranslatef(0.0f, 0.0f, legSizeZ - offset);
 			glRotatef(angleArm, 0.0f, 1.0f, 0.0f);
-			glTranslatef(0.0f, 0.0f, -(legSizeZ - 0.5f) );
+			glTranslatef(0.0f, 0.0f, -(legSizeZ - offset) );
 
 			glPushMatrix();
 

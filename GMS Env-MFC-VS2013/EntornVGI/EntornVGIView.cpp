@@ -1922,13 +1922,13 @@ void CEntornVGIView::Teclat_Hurakan(UINT nChar, UINT nRepCnt) {
 
 	// Chosing the variable
 	if (nChar == VK_RIGHT) {
-		if (hurakanKeyValue > 2)
+		if (hurakanKeyValue >= 2)
 			hurakanKeyValue = 2;
 		else
 			hurakanKeyValue++;
 	}
 	else if (nChar == VK_LEFT) {
-		if (hurakanKeyValue < 0)
+		if (hurakanKeyValue <= 0)
 			hurakanKeyValue = 0;
 		else
 			hurakanKeyValue--;
@@ -1940,9 +1940,11 @@ void CEntornVGIView::Teclat_Hurakan(UINT nChar, UINT nRepCnt) {
 		{
 		case 0: {
 			hurakanEPower += 0.1;
+			angleArm += 1;
 		}break;
 		case 1: {
 			hurakanGravity += 0.1;
+			angleSeat += 1;
 		}break;
 		case 2: {
 			hurakanMaterial++;
@@ -1954,9 +1956,11 @@ void CEntornVGIView::Teclat_Hurakan(UINT nChar, UINT nRepCnt) {
 		{
 		case 0: {
 			hurakanEPower -= 0.1;
+			angleArm -= 1;
 		}break;
 		case 1: {
 			hurakanGravity -= 0.1;
+			angleSeat -= 1;
 		}break;
 		case 2: {
 			hurakanMaterial--;
@@ -1975,8 +1979,8 @@ void CEntornVGIView::Teclat_Hurakan(UINT nChar, UINT nRepCnt) {
 	else if (hurakanGravity < 0)
 		hurakanGravity = 0;
 
-	if (hurakanMaterial > 4)
-		hurakanMaterial = 4;
+	if (hurakanMaterial > 3)
+		hurakanMaterial = 3;
 	else if (hurakanMaterial < 0)
 		hurakanMaterial = 0;
 
@@ -2863,10 +2867,10 @@ void CEntornVGIView::OnObjectHurakan()
 {
 	objecte = HURAKAN;
 
+	OnProjectionHurakan();
 	//	---- Entorn GMS: PAY ATTENTION!!. To change the scale of the object to fit it in the Volume of Visualization (-1,1,-1,1,-1,1) (Orthographic Views)
 
 	//  ---- Entorn GMS: PAY ATTENTION!!. Modify R parameter of Point of View to fit the object in screen (Perspective, Axonometric projections)
-
 	// Return to main loop OnPaint() to redraw the scene
 	InvalidateRect(NULL, false);
 }
