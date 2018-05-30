@@ -148,6 +148,83 @@ public:
 	GLfloat mida;	// Factor d'escala per calcular Volum de Visualització de l'objecte que encaixi.
 	CString nom;	// Nom de fitxer.
 	CString buffer; // Buffer que magatzema string caracters corresponent a variables float a printar en Status Bar (funció Barra_Estat).
+
+// Variables about Hurakan
+	GLfloat hurakanASpeed;   /*Hurakan average speed calcu-
+							 lated by the function of the
+							 hurakan engine*/
+	GLfloat maxhurakanASpeed;
+	GLfloat oldASpeed;
+	GLfloat hurakanEPower;   // Hurakan engine power.
+	GLfloat hurakanIUPower;  // Hurakan power in IU.
+	GLfloat hurakanGravity;  // Hurakan gravity value
+	GLfloat hurakanMass;	 // Hurakan mass value with 40
+							 // people inside.
+	GLfloat hurakanAAccel;	 //Angular acceleration.
+	GLfloat hurakanLAccel;	 //Linear acceleration.
+	GLfloat counter;
+	GLfloat counter2;
+	GLfloat angle1;
+	GLfloat angle2;
+	GLfloat oldangleArm;
+	GLfloat velIncrement;
+	float angle1increment;
+	int hurakanGravityValue; /* Hurakan Gravity value used 
+							 to change the gravity. 
+							 0 = Earth Gravity, 
+							 1 = Moon Gravity, 
+							 2 = Mars Gravity, 
+							 3 = Venus Gravity */
+	int hurakanKeyValue;     /* Hurakan key value used for 
+							 change the selected variable.
+							 0 = hurakanEPower,
+							 1 = hurakanGravity,
+							 2 = hurakanMaterial*/
+	int hurakanViewMode;	 /* View mode. 0 = both, 
+							 1 = Inside Hurakan, 
+							 2 = Perspective */
+	bool hurakanStatus;		 /* Represent the status of the
+							 hurikan. 
+							 FALSE = Stopped, 
+							 TRUE = Activate */
+	int hurakanMaterial;     /*Represent the current material
+							 0 = Original Hurakan,
+							 1 = Full Steel Hurakan,
+							 2 = Full Aluminium Hurakan,
+							 3 = Full Wood Hurakan */
+	int hurakanAccelFrame;	 // Number of frames to accelerate.
+	int hurakanSpeedFrame;
+	int hurakanmaxSpeedFrame;
+	int i;
+
+
+// Gravity values
+	float Earth = 9.8f;		// Gravity on Earth in m/s.
+	float Moon = 1.6f;		// Gravity on The Moon in m/s.
+	float Mars = 3.7f;		// Gravity on Mars in m / s.
+	float Venus = 8.9f;		// Gravity on Venus in m/s.
+
+// Hurakan Radius
+	float hurakanRadius = 10.0f;
+	float radtodeg = 360.0f / (float)TWOPI;
+
+// Mass values
+	float Original = 17400.0f;
+	float Steel = 21060.0f;
+	float Aluminium = 8859.0f;
+	float Wood = 3309.0f;
+
+// Acceleration time.
+	float accelTime = 10.0f;
+
+// Turn numbers
+	int Turn;				 // Number of turns done by the
+							 // Hurakan.
+	GLfloat maxTurns;		 // Maximum number of turns.
+	GLfloat accelTurns;
+	int NaccelTurns;
+	int NTurns;
+
 //--------------VGI Environment: Fi De Variables globals de CEntornVGIView
 
 // Operaciones
@@ -197,6 +274,7 @@ public:
 	void CEntornVGIView::Teclat_TransEscala(UINT nChar, UINT nRepCnt);
 	void CEntornVGIView::Teclat_TransRota(UINT nChar, UINT nRepCnt);
 	void CEntornVGIView::Teclat_TransTraslada(UINT nChar, UINT nRepCnt);
+	void CEntornVGIView::Teclat_Hurakan(UINT nChar, UINT nRepCnt);
 
 	CMFCStatusBar& GetStatusBar() const
 	{
@@ -312,8 +390,6 @@ public:
 	afx_msg void OnUpdateShadersPhong(CCmdUI *pCmdUI);
 	afx_msg void OnVistaSatelit();
 	afx_msg void OnUpdateVistaSatelit(CCmdUI *pCmdUI);
-	afx_msg void OnObjectHurikan();
-	afx_msg void OnUpdateObjectHurikan(CCmdUI *pCmdUI);
 	afx_msg void OnProjectionHurakan();
 	afx_msg void OnUpdateProjectionHurakan(CCmdUI *pCmdUI);
 	afx_msg void OnObjectHurakan();

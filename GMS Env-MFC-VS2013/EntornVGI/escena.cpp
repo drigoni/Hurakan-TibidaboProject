@@ -9,6 +9,26 @@
 #include "material.h"
 #include "escena.h"
 
+float angle1 = 0.0f;
+float angle2 = 0.0f;
+float accelTime = 10.0f;
+float hurakanRadius = 12.0f;
+float hurakanIUPower = 0.0f;
+float hurakanLAccel = 0.0f;
+float maxhurakanASpeed = 0.0f;
+float radtodeg = 360.0f / (float)TWOPI;
+float maxTurns = 0.0f;
+float velIncrement = 0.0f;
+float ang1Increment = 0.0f;
+float ang1AccelIncrement = 0.0f;
+float hurakanASpeed = 0.0f;
+float oldASpeed = 0.0f;
+float accelTurns = 0.0f;
+int NTurns = 0;
+int Turn = 0;
+int i = 0;
+
+
 // TEXTURES: Vector texture names
 GLuint texturID[NUM_MAX_TEXTURES] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
 
@@ -19,11 +39,9 @@ void dibuixa_EscenaGL(char objecte, CColor col_object, bool ref_mat, bool sw_mat
 
 	switch (objecte)
 	{
-// Hurikan drawing
+// Hurakan drawing
 	case HURAKAN:
-		glDisable(GL_TEXTURE_2D);
-		sea();
-		hurikan(textur, texturID, 0, 0, 10);
+		hurakan(textur, texturID, angle1, angle2, 10);
 		break;
 
 // Truck drawing
@@ -926,82 +944,228 @@ void sea(void)
 
 
 // OBJECTE Hurakan project
-void hurikan(bool textu, GLuint VTextu[NUM_MAX_TEXTURES], GLfloat angleArm, GLfloat angleSeat, GLfloat hurakanSize)
+void hurakan(bool textu, GLuint VTextu[NUM_MAX_TEXTURES], GLfloat angleArm, GLfloat angleSeat, GLfloat hurakanSize)
 {
 	GLfloat legSizeX = 2.5, legSizeY = 1, legSizeZ = 12;
 	GLfloat armSizeX = 1, armSizeY = 1, armSizeZ = 20;
 	GLfloat seatSizeX = 3, seatSizeY = 16, seatSizeZ = 1.5;
 	GLfloat offset = 0.5;
 
-	// Color
-	glColor3f(1.0f, 1.0f, 1.0f);
-
-	glScalef(hurakanSize, hurakanSize, hurakanSize);
 
 	glPushMatrix();
-		
-		// Rotate the arms and the seat
-		glTranslatef(0.0f, 0.0f, legSizeZ - 0.5f);
-		glRotatef(angleArm, 0.0f, 1.0f, 0.0f);
-		glTranslatef(0.0f, 0.0f, -(legSizeZ - 0.5f) );
-
+		glRotatef(270.0, 0.0, 1.0, 0.0);
+		glTranslatef(-25.0f, 0.0f, 0.0f);
+		//Hemisphere
 		glPushMatrix();
-
-			// Rotate the seat
-			glTranslatef(0.0f, 0.0f, legSizeZ - armSizeZ/2 + offset);
-			glRotatef(angleSeat, 0.0f, 1.0f, 0.0f);
-			glTranslatef(0.0f, 0.0f, -(legSizeZ - armSizeZ/2 + offset) );
-
-			// Draw the seat
+			glColor3f(1.0, 1.0, 1.0);
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+			glEnable(GL_BLEND);
 			glPushMatrix();
+				//glRotatef(90.0, 0.0, 0.0, 0.0);
+				glBindTexture(GL_TEXTURE_2D, texturID[1]);
+				hemisphere(1000.0, 500, 500);
+			glPopMatrix();
+			glBindTexture(GL_TEXTURE_2D, texturID[1]);
+			glPushMatrix();
+				glTranslatef(25.0f, 0.0f, 0.0f);
+				glScalef(0.001f, 5000.0f, 3000.0f);
+				glutSolidCube(1.0);
+			glPopMatrix();
+		glPopMatrix();
+	glPopMatrix();
+	
+
+	
+	//Hurakan structure
+	glPushMatrix();
+		// Color
+		glColor3f(1.0f, 1.0f, 1.0f);
+
+		glTranslatef(0.0f, 1.0f, 0.0f);
+		glScalef(hurakanSize, hurakanSize, hurakanSize);
+		glPushMatrix();
+		
+			// Rotate the arms and the seat
+			glTranslatef(0.0f, 0.0f, legSizeZ - 0.5f);
+			glRotatef(angleArm, 0.0f, 1.0f, 0.0f);
+			glTranslatef(0.0f, 0.0f, -(legSizeZ - 0.5f) );
+
+			glPushMatrix();
+
+				// Rotate the seat
 				glTranslatef(0.0f, 0.0f, legSizeZ - armSizeZ/2 + offset);
-				glScalef(seatSizeX, seatSizeY, seatSizeZ);
+				glRotatef(angleSeat, 0.0f, 1.0f, 0.0f);
+				glTranslatef(0.0f, 0.0f, -(legSizeZ - armSizeZ/2 + offset) );
+
+				// Draw the seat
+				glPushMatrix();
+					glTranslatef(0.0f, 0.0f, legSizeZ - armSizeZ/2 + offset);
+					glScalef(seatSizeX, seatSizeY, seatSizeZ);
+					glutSolidCube(1);
+				glPopMatrix();
+
+			glPopMatrix();
+
+			// Draw two arms
+			glPushMatrix();
+				glTranslatef(0.0f, 0.0f, legSizeZ - armSizeZ/2 + armSizeZ/2);
+				glPushMatrix();
+					glTranslatef(0.0f, -(armSizeY/2 + seatSizeY/2), 0.0f);
+					glPushMatrix();
+						glTranslatef(0.0f, -(armSizeY/2 + 0.5f), -0.5f);
+						glutSolidCube(1);
+					glPopMatrix();
+					glPushMatrix();
+						glScalef(armSizeX, armSizeY, armSizeZ);
+						glutSolidCube(1);
+					glPopMatrix();
+				glPopMatrix();
+				glPushMatrix();
+					glTranslatef(0.0f, armSizeY/2 + seatSizeY/2, 0.0f);
+					glPushMatrix();
+						glTranslatef(0.0f, armSizeY/2 + 0.5f, -0.5f);
+						glutSolidCube(1);
+					glPopMatrix();
+					glPushMatrix();
+						glScalef(armSizeX, armSizeY, armSizeZ);
+						glutSolidCube(1);
+					glPopMatrix();
+				glPopMatrix();
+			glPopMatrix();
+
+		glPopMatrix();
+
+		//Draw two legs
+		glPushMatrix();
+			glTranslatef(0.0f, 0.0f, legSizeZ / 2);
+			glPushMatrix();
+				glTranslatef(0.0f, seatSizeY / 2 + armSizeY + 1.0f + legSizeY / 2, 0.0f);
+				glScalef(legSizeX, legSizeY, legSizeZ);
 				glutSolidCube(1);
 			glPopMatrix();
-
-		glPopMatrix();
-
-		// Draw two arms
-		glPushMatrix();
-			glTranslatef(0.0f, 0.0f, legSizeZ - armSizeZ/2 + armSizeZ/2);
 			glPushMatrix();
-				glTranslatef(0.0f, -(armSizeY/2 + seatSizeY/2), 0.0f);
-				glPushMatrix();
-					glTranslatef(0.0f, -(armSizeY/2 + 0.5f), -0.5f);
-					glutSolidCube(1);
-				glPopMatrix();
-				glPushMatrix();
-					glScalef(armSizeX, armSizeY, armSizeZ);
-					glutSolidCube(1);
-				glPopMatrix();
-			glPopMatrix();
-			glPushMatrix();
-				glTranslatef(0.0f, armSizeY/2 + seatSizeY/2, 0.0f);
-				glPushMatrix();
-					glTranslatef(0.0f, armSizeY/2 + 0.5f, -0.5f);
-					glutSolidCube(1);
-				glPopMatrix();
-				glPushMatrix();
-					glScalef(armSizeX, armSizeY, armSizeZ);
-					glutSolidCube(1);
-				glPopMatrix();
+				glTranslatef(0.0f, -(seatSizeY / 2 + armSizeY + 1.0f + legSizeY / 2), 0.0f);
+				glScalef(legSizeX, legSizeY, legSizeZ);
+				glutSolidCube(1);
 			glPopMatrix();
 		glPopMatrix();
 
-	glPopMatrix();
-
-	//Draw two legs
-	glPushMatrix();
-		glTranslatef(0.0f, 0.0f, legSizeZ / 2);
+		//Draw cube
 		glPushMatrix();
-			glTranslatef(0.0f, seatSizeY / 2 + armSizeY + 1.0f + legSizeY / 2, 0.0f);
-			glScalef(legSizeX, legSizeY, legSizeZ);
-			glutSolidCube(1);
-		glPopMatrix();
-		glPushMatrix();
-			glTranslatef(0.0f, -(seatSizeY / 2 + armSizeY + 1.0f + legSizeY / 2), 0.0f);
-			glScalef(legSizeX, legSizeY, legSizeZ);
+			glTranslatef(0.0, 0.0, 0.5f);
+			glScalef(legSizeX + 20, 2 * (legSizeY + armSizeZ) + seatSizeY + 5, 1);
 			glutSolidCube(1);
 		glPopMatrix();
 	glPopMatrix();
 }
+
+void changeangle() {
+
+	if (Turn == 0) {
+
+		oldASpeed = hurakanASpeed;
+		hurakanASpeed += velIncrement;
+		velIncrement = (hurakanASpeed * 0.004);
+		ang1AccelIncrement = hurakanASpeed * 0.016;
+		angle1 += 0.5f * ang1AccelIncrement;
+	}
+	else if (Turn > 0 && Turn < NTurns) {
+		hurakanASpeed = maxhurakanASpeed;
+		angle1 += ang1Increment;
+	}
+	else if (Turn == NTurns) {
+		hurakanASpeed = maxhurakanASpeed;
+		oldASpeed = hurakanASpeed;
+		hurakanASpeed -= velIncrement;
+		velIncrement = (hurakanASpeed * 0.004);
+		ang1AccelIncrement = hurakanASpeed * 0.016;
+		angle1 += 0.5f * ang1AccelIncrement;
+	}
+	else if (Turn > NTurns) {
+		angle1 = 0;
+	}
+
+	if (angle1 > 360) {
+		angle1 = angle1 - 360;
+		Turn++;
+	}
+}
+
+void changeangle2() {
+	if (Turn > 0 && Turn < NTurns) {
+		
+		if (angle1 > 45 && angle1 < 260) {
+			angle2 = angle2 + i * 0.03f;
+			i++;
+		}
+		else {
+			angle2 = 0;
+			i = 0;
+		}
+		if (angle2 > 360) {
+			angle2 = angle2 - 360;
+		}
+	
+	}
+}
+
+float speedupdate() {
+	return hurakanASpeed;
+}
+
+void calculateacceleration(GLfloat hurakanEPower, GLfloat hurakanMass,  GLfloat hurakanGravity) {
+
+	Turn = 0;
+
+	oldASpeed = 0.0f;
+
+	angle1 = 0.0f;
+
+	angle2 = 0.0f;
+
+	// Acceleration.
+
+	// Convert Power to IU.
+
+	hurakanIUPower = hurakanEPower * 765;
+
+
+	// Calculate the acceleration.
+
+	hurakanLAccel = (hurakanIUPower * accelTime) / (hurakanMass * hurakanRadius * (float)TWOPI);
+
+	// Angular velocity.
+
+	// Calculate the maximum angular speed.
+
+	maxhurakanASpeed = (sqrt(hurakanGravity / hurakanRadius) + sqrt(hurakanLAccel / hurakanRadius)) * radtodeg;
+
+	// Turns made during the animation, excluding the acceleration and deceleration.
+
+	// Calculate number of turns.
+
+	maxTurns = ceilf((maxhurakanASpeed * 90 / 360) * 1) / 1;
+
+	NTurns = (int)maxTurns;
+
+	// Increment in angle and velocity for position calculation.
+
+	// Calculate the number of frames to do the animation.
+
+	velIncrement = (maxhurakanASpeed / accelTime) * 0.016f;
+
+	ang1Increment = ((maxTurns * 360.0f) / 90.0f) * 0.016f;
+}
+
+	//OBJECTE Engine for the Hurakan, demonstration of how it moves.
+/*void engine(bool textu, GLuint VTextu[NUM_MAX_TEXTURES]) {
+
+	//Draw the engine inmobile part.
+	//Draw the base of the engine.
+	glPushMatrix();
+	glScalef((float)sqrt(), 8.0f, 4.0f);
+	glutSolidCube(1);
+	glPopMatrix();
+
+	glPopMatrix();
+}*/

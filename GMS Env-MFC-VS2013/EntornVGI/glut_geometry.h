@@ -2532,6 +2532,7 @@ void gluEsfera(GLdouble radius, GLint slices, GLint stacks);
 // --- ACTIVACIÓ DEFINICIÓ COORDENADES TEXTURA PER A OBJECTES GLUT ------------------------ 
 void Activa_Coordenades_Textura();
 void Desactiva_Coordenades_Textura();
+void hemisphere(GLdouble, GLint, GLint);
 
 #endif  /* GLET_GEOMETRY_H */
 

@@ -2353,5 +2353,90 @@ void Desactiva_Coordenades_Textura()
 	glDisable(GL_TEXTURE_GEN_T);
 }
 
+//-----------------------  HEMISPHERE --------------------------------
+void hemisphere(GLdouble radius, GLint slices, GLint stacks)
+{
+	GLint i, j;
+	GLfloat sinCache1a[CACHE_SIZE];
+	GLfloat cosCache1a[CACHE_SIZE];
+	GLfloat sinCache2a[CACHE_SIZE];
+	GLfloat cosCache2a[CACHE_SIZE];
+	GLfloat sinCache1b[CACHE_SIZE];
+	GLfloat cosCache1b[CACHE_SIZE];
+	GLfloat sinCache2b[CACHE_SIZE];
+	GLfloat cosCache2b[CACHE_SIZE];
+	GLfloat angle;
+	GLfloat zLow, zHigh;
+	GLfloat sintemp1 = 0.0, sintemp2 = 0.0, sintemp3 = 0.0, sintemp4 = 0.0;
+	GLfloat costemp1 = 0.0, costemp2 = 0.0, costemp3 = 0.0, costemp4 = 0.0;
+	GLboolean needCache2;
+	GLint start, finish;
+
+	glBindTexture(GL_TEXTURE_2D, 2);
+
+
+	if (slices >= CACHE_SIZE) slices = CACHE_SIZE - 1;
+	if (stacks >= CACHE_SIZE) stacks = CACHE_SIZE - 1;
+	if (slices < 2 || stacks < 1 || radius < 0.0) return;
+
+	// Cache2 is the various normals at the vertices themselves 
+	needCache2 = GL_TRUE;
+
+	for (i = 0; i < (slices); i++) {
+		angle = PI * i / slices;
+		sinCache1a[i] = sin(angle) * 2;
+		cosCache1a[i] = cos(angle) * 2;
+		sinCache2a[i] = sinCache1a[i];
+		cosCache2a[i] = cosCache1a[i];
+	}
+
+	for (j = 0; j <= stacks; j++) {
+		angle = PI * j / stacks;
+		sinCache2b[j] = sin(angle + 10);
+		cosCache2b[j] = cos(angle + 10);
+		sinCache1b[j] = radius * sin(angle);
+		cosCache1b[j] = radius * cos(angle);
+	}
+
+	// Make sure it comes to a point 
+	sinCache1b[0] = 0;
+	sinCache1b[stacks] = 0;
+
+	sinCache1a[slices] = sinCache1a[0];
+	cosCache1a[slices] = cosCache1a[0];
+
+	sinCache2a[slices] = sinCache2a[0];
+	cosCache2a[slices] = cosCache2a[0];
+
+	//	** When texturing we need to respecify the
+	//	** texture coordinates of the apex for every adjacent vertex (because
+	//	** it isn't a constant for that point)
+	start = 0;
+	finish = stacks;
+
+	for (j = start; j < finish; j++) {
+		zLow = cosCache1b[j];
+		zHigh = cosCache1b[j + 1];
+		sintemp1 = sinCache1b[j];
+		sintemp2 = sinCache1b[j + 1];
+		sintemp3 = sinCache2b[j + 1];
+		costemp3 = cosCache2b[j + 1];
+		sintemp4 = sinCache2b[j];
+		costemp4 = cosCache2b[j];
+
+		glBegin(GL_QUAD_STRIP);
+		for (i = 0; i <= (slices / 1.0001); i++) {
+			glNormal3f(sinCache2a[i] * sintemp3, cosCache2a[i] * sintemp3, costemp3);
+			glTexCoord2f(1 - (float)i / (slices), 1 - (float)(j + 1) / (stacks));
+			glVertex3f(sintemp2 * sinCache1a[i], sintemp2 * cosCache1a[i], zHigh);
+
+			glNormal3f(sinCache2a[i] * sintemp4, cosCache2a[i] * sintemp4, costemp4);
+			glTexCoord2f(1 - (float)i / slices, 1 - (float)j / (stacks));
+			glVertex3f(sintemp1 * sinCache1a[i], sintemp1 * cosCache1a[i], zLow);
+		}
+		glEnd();
+	}
+
+}
 
 /*** END OF FILE ***/

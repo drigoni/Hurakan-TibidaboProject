@@ -250,6 +250,14 @@ CEntornVGIView::CEntornVGIView()
 	iluInit();					// Inicialize ILU library
 	ilutRenderer(ILUT_OPENGL);	// Inicialize ILUT library for OpenGL
 
+// Hurakan variables
+	hurakanASpeed = 0.0;
+	hurakanEPower = 5;
+	hurakanGravity = 9.807;
+	hurakanKeyValue = 0;
+	hurakanViewMode = 0;
+	hurakanStatus = false;
+	hurakanMaterial = 0;
 }
 
 CEntornVGIView::~CEntornVGIView()
@@ -621,36 +629,71 @@ void CEntornVGIView::OnPaint()
 		else
 			FonsN();
 
-		// Definition of Viewport, Projection and Camera
-		Projeccio_Perspectiva(0, 0, w/2, h, OPV.R);
-		Vista_Hurakan(OPV.R, c_fons, col_obj, objecte, mida, pas, oculta,
-			test_vis, back_line, ilumina, llum_ambient, llumGL, textura, textura_map, ifixe, eixos);
+		if (hurakanViewMode == 0) {
+			// Definition of Viewport, Projection and Camera
+			Projeccio_Perspectiva(0, 0, w / 2, h, OPV.R);
+			Vista_Hurakan(OPV.R, c_fons, col_obj, objecte, mida, pas, oculta,
+				test_vis, back_line, ilumina, llum_ambient, llumGL, textura, textura_map, ifixe, eixos);
 
 
-		// Draw the object or scene
-		glPushMatrix();
-		configura_Escena();   // To apply Geometrical Transforms according Transform pop up and to configure scene objects
-		dibuixa_Escena();		// Draw scene geometry using OpenGL commands.
-		glPopMatrix();
+			// Draw the object or scene
+			glPushMatrix();
+			configura_Escena();   // To apply Geometrical Transforms according Transform pop up and to configure scene objects
+			dibuixa_Escena();		// Draw scene geometry using OpenGL commands.
+			glPopMatrix();
 
-		// Definition of Viewport, Projection and Camera
-		Projeccio_Perspectiva(w/2+1, 0, w/2, h, OPV.R);
-		if (navega) {
-			Vista_Navega(opvN, false, n, vpv, pan, tr_cpv, tr_cpvF, c_fons, col_obj, objecte, true, pas,
-				oculta, test_vis, back_line, ilumina, llum_ambient, llumGL, textura, textura_map, ifixe, eixos);
+			// Definition of Viewport, Projection and Camera
+			Projeccio_Perspectiva(w / 2 + 1, 0, w / 2, h, OPV.R);
+			if (navega) {
+				Vista_Navega(opvN, false, n, vpv, pan, tr_cpv, tr_cpvF, c_fons, col_obj, objecte, true, pas,
+					oculta, test_vis, back_line, ilumina, llum_ambient, llumGL, textura, textura_map, ifixe, eixos);
+			}
+			else {
+				n[0] = 0;		n[1] = 0;		n[2] = 0;
+				Vista_Esferica(OPV, Vis_Polar, pan, tr_cpv, tr_cpvF, c_fons, col_obj, objecte, mida, pas,
+					oculta, test_vis, back_line, ilumina, llum_ambient, llumGL, textura,
+					textura_map, ifixe, eixos);
+			}
+
+			// Draw the object or scene
+			glPushMatrix();
+			configura_Escena();   // To apply Geometrical Transforms according Transform pop up and to configure scene objects
+			dibuixa_Escena();		// Draw scene geometry using OpenGL commands.
+			glPopMatrix();
 		}
-		else {
-			n[0] = 0;		n[1] = 0;		n[2] = 0;
-			Vista_Esferica(OPV, Vis_Polar, pan, tr_cpv, tr_cpvF, c_fons, col_obj, objecte, mida, pas,
-				oculta, test_vis, back_line, ilumina, llum_ambient, llumGL, textura,
-				textura_map, ifixe, eixos);
-		}
+		else if (hurakanViewMode == 1) {
+			// Definition of Viewport, Projection and Camera
+			Projeccio_Perspectiva(0, 0, w, h, OPV.R);
+			Vista_Hurakan(OPV.R, c_fons, col_obj, objecte, mida, pas, oculta,
+				test_vis, back_line, ilumina, llum_ambient, llumGL, textura, textura_map, ifixe, eixos);
 
-		// Draw the object or scene
-		glPushMatrix();
-		configura_Escena();   // To apply Geometrical Transforms according Transform pop up and to configure scene objects
-		dibuixa_Escena();		// Draw scene geometry using OpenGL commands.
-		glPopMatrix();
+
+			// Draw the object or scene
+			glPushMatrix();
+			configura_Escena();   // To apply Geometrical Transforms according Transform pop up and to configure scene objects
+			dibuixa_Escena();		// Draw scene geometry using OpenGL commands.
+			glPopMatrix();
+		}
+		else if (hurakanViewMode == 2) {
+			// Definition of Viewport, Projection and Camera
+			Projeccio_Perspectiva(0, 0, w, h, OPV.R);
+			if (navega) {
+				Vista_Navega(opvN, false, n, vpv, pan, tr_cpv, tr_cpvF, c_fons, col_obj, objecte, true, pas,
+					oculta, test_vis, back_line, ilumina, llum_ambient, llumGL, textura, textura_map, ifixe, eixos);
+			}
+			else {
+				n[0] = 0;		n[1] = 0;		n[2] = 0;
+				Vista_Esferica(OPV, Vis_Polar, pan, tr_cpv, tr_cpvF, c_fons, col_obj, objecte, mida, pas,
+					oculta, test_vis, back_line, ilumina, llum_ambient, llumGL, textura,
+					textura_map, ifixe, eixos);
+			}
+
+			// Draw the object or scene
+			glPushMatrix();
+			configura_Escena();   // To apply Geometrical Transforms according Transform pop up and to configure scene objects
+			dibuixa_Escena();		// Draw scene geometry using OpenGL commands.
+			glPopMatrix();
+		}
 
 		// Swap OpenGL buffer --> Screen Buffer
 		SwapBuffers(m_pDC->GetSafeHdc());
@@ -850,9 +893,10 @@ void CEntornVGIView::Barra_Estat()
 
 // Status Bar R- Point of View Origin (camera position)
 	if (projeccio == CAP) buffer = "       ";	
-		else if (projeccio==ORTO) buffer=" ORTO   ";
-			else if (navega) buffer = " NAV   ";
-			else buffer.Format(_T("%.1f"), OPVAux.R);
+	else if (projeccio==ORTO) buffer=" ORTO   ";
+	else if (navega) buffer = " NAV   ";
+	else buffer.Format(_T("%.1f"), OPVAux.R);
+
 	sss = _T("R=") + buffer;
 // Update R position of Status Bar
 	GetStatusBar().SetPaneText(1, sss);
@@ -930,80 +974,111 @@ void CEntornVGIView::Barra_Estat()
 
 // Status Bar to give the Geometrical Transform type (TRAS, ROT, ESC)
 	sss = " ";
-	if (transf) {
-		if (rota) sss = "ROT";
-		else if (trasl) sss = "TRA";
-		else if (escal) sss = "ESC";
+	if (projeccio != HURAKAN) {
+		if (transf) {
+			if (rota) sss = "ROT";
+			else if (trasl) sss = "TRA";
+			else if (escal) sss = "ESC";
+		}
+		else {
+			// Components d'intensitat de fons que varien per teclat
+			if ((fonsR) && (fonsG) && (fonsB)) sss = " RGB";
+			else if ((fonsR) && (fonsG)) sss = " RG ";
+			else if ((fonsR) && (fonsB)) sss = " R   B";
+			else if ((fonsG) && (fonsB)) sss = "   GB";
+			else if (fonsR) sss = " R  ";
+			else if (fonsG) sss = "   G ";
+			else if (fonsB) sss = "      B";
+		}
 	}
 	else {
-		// Components d'intensitat de fons que varien per teclat
-		if ((fonsR) && (fonsG) && (fonsB)) sss = " RGB";
-		else if ((fonsR) && (fonsG)) sss = " RG ";
-		else if ((fonsR) && (fonsB)) sss = " R   B";
-		else if ((fonsG) && (fonsB)) sss = "   GB";
-		else if (fonsR) sss = " R  ";
-		else if (fonsG) sss = "   G ";
-		else if (fonsB) sss = "      B";
+		if (hurakanKeyValue == 0) sss = "Pgms";
+		else if (hurakanKeyValue == 1) sss = "pGms";
+		else sss = "pgMs";
 	}
 // Update Transformations mode of Status Bar
 	GetStatusBar().SetPaneText(8, sss);
 
 // Status Bar of the parameters of Transform, Color and positions of Robot and human leg.
 	sss = " ";
-	if (transf)
-	{	if (rota)
-		{	buffer.Format(_T("%.1f"), TG.VRota.x);
-			sss = _T("  ") + buffer + _T("   ");
+	if (projeccio != HURAKAN) {
+		if (transf)
+		{
+			if (rota)
+			{
+				buffer.Format(_T("%.1f"), TG.VRota.x);
+				sss = _T("  ") + buffer + _T("   ");
 
-			buffer.Format(_T("%.1f"), TG.VRota.y);
-			sss = sss + buffer + _T("   ");
+				buffer.Format(_T("%.1f"), TG.VRota.y);
+				sss = sss + buffer + _T("   ");
 
-			buffer.Format(_T("%.1f"), TG.VRota.z);
-			sss = sss + buffer;
+				buffer.Format(_T("%.1f"), TG.VRota.z);
+				sss = sss + buffer;
+			}
+			else if (trasl)
+			{
+				buffer.Format(_T("%.1f"), TG.VTras.x);
+				sss = _T("  ") + buffer + _T("   ");
+
+				buffer.Format(_T("%.1f"), TG.VTras.y);
+				sss = sss + buffer + _T("   ");
+
+				buffer.Format(_T("%.1f"), TG.VTras.z);
+				sss = sss + buffer;
+			}
+			else if (escal)
+			{
+				buffer.Format(_T("%.2f"), TG.VScal.x);
+				sss = _T(" ") + buffer + _T("  ");
+
+				buffer.Format(_T("%.2f"), TG.VScal.y);
+				sss = sss + buffer + _T("  ");
+
+				buffer.Format(_T("%.2f"), TG.VScal.x);
+				sss = sss + buffer;
+			}
 		}
-		else if (trasl)
-		{	buffer.Format(_T("%.1f"), TG.VTras.x);
-			sss = _T("  ") + buffer + _T("   ");
+		else {	// Background Color
+			if (!sw_color)
+			{
+				buffer.Format(_T("%.3f"), c_fons.r);
+				sss = _T(" ") + buffer + _T("  ");
 
-			buffer.Format(_T("%.1f"), TG.VTras.y);
-			sss = sss + buffer + _T("   ");
+				buffer.Format(_T("%.3f"), c_fons.g);
+				sss = sss + buffer + _T("  ");
 
-			buffer.Format(_T("%.1f"), TG.VTras.z);
-			sss = sss + buffer;
-		}
-		else if (escal)
-		{	buffer.Format(_T("%.2f"), TG.VScal.x);
-			sss = _T(" ") + buffer + _T("  ");
+				buffer.Format(_T("%.3f"), c_fons.b);
+				sss = sss + buffer;
+			}
+			else
+			{	// Object Color
+				buffer.Format(_T("%.3f"), col_obj.r);
+				sss = _T(" ") + buffer + _T("  ");
 
-			buffer.Format(_T("%.2f"), TG.VScal.y);
-			sss = sss + buffer + _T("  ");
+				buffer.Format(_T("%.3f"), col_obj.g);
+				sss = sss + buffer + _T("  ");
 
-			buffer.Format(_T("%.2f"), TG.VScal.x);
-			sss = sss + buffer;
+				buffer.Format(_T("%.3f"), col_obj.b);
+				sss = sss + buffer;
+			}
 		}
 	}
-	else {	// Background Color
-		if (!sw_color)
-		{	buffer.Format(_T("%.3f"), c_fons.r);
-			sss = _T(" ") + buffer + _T("  ");
+	else {
+		// Hurakan values
+		buffer.Format(_T("%.0f"), hurakanEPower);
+		sss = _T("   ") + buffer + _T("   ");
 
-			buffer.Format(_T("%.3f"), c_fons.g);
-			sss = sss + buffer + _T("  ");
+		buffer.Format(_T("%i"), hurakanGravityValue);
+		sss = sss + buffer + _T("   ");
 
-			buffer.Format(_T("%.3f"), c_fons.b);
-			sss = sss + buffer;
-		}
-		else
-		{	// Object Color
-			buffer.Format(_T("%.3f"), col_obj.r);
-			sss = _T(" ") + buffer + _T("  ");
+		buffer.Format(_T("%i"), hurakanMaterial);
+		sss = sss + buffer + _T("   ");
 
-			buffer.Format(_T("%.3f"), col_obj.g);
-			sss = sss + buffer + _T("  ");
-
-			buffer.Format(_T("%.3f"), col_obj.b);
-			sss = sss + buffer;
-		}
+		GLfloat tmp = round(hurakanASpeed * 10.0)/10.0;
+		if (tmp >= 200) tmp = 199.9;
+		else if (tmp <= 0) tmp = 0;
+		buffer.Format(_T("%.1f"), tmp);
+		sss = sss + buffer + _T("   ");
 	}
 
 // Update Background or object Color of Status Bar
@@ -1189,19 +1264,26 @@ void CEntornVGIView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 	float modul = 0;
 	GLfloat vdir[3] = { 0, 0, 0 };
 
-	if ((!pan) && (!transf) && (!navega))
-	{
-		if (!sw_color) Teclat_ColorFons(nChar, nRepCnt);
-		else Teclat_ColorObjecte(nChar, nRepCnt);
-	}
-	else {	if (transf)
-			{	if (rota) Teclat_TransRota(nChar, nRepCnt);
-				  else if (trasl) Teclat_TransTraslada(nChar, nRepCnt);
-					else if (escal) Teclat_TransEscala(nChar, nRepCnt);
+	if (projeccio != HURAKAN) {
+		if ((!pan) && (!transf) && (!navega))
+		{
+			if (!sw_color) Teclat_ColorFons(nChar, nRepCnt);
+			else Teclat_ColorObjecte(nChar, nRepCnt);
+		}
+		else {
+			if (transf)
+			{
+				if (rota) Teclat_TransRota(nChar, nRepCnt);
+				else if (trasl) Teclat_TransTraslada(nChar, nRepCnt);
+				else if (escal) Teclat_TransEscala(nChar, nRepCnt);
 			}
 			if (pan) Teclat_Pan(nChar, nRepCnt);
-			 else if (navega) Teclat_Navega(nChar, nRepCnt);
+			else if (navega) Teclat_Navega(nChar, nRepCnt);
 		}
+	}
+	else {
+		Teclat_Hurakan(nChar, nRepCnt);
+	}
 
 // OnPaint() call to redraw the scene
 	InvalidateRect(NULL, false);
@@ -1716,7 +1798,6 @@ void CEntornVGIView::Teclat_TransRota(UINT nChar, UINT nRepCnt)
 	}
 }
 
-
 // Teclat_TransTraslada: Keys to change the translation values for X,Y,Z.
 void CEntornVGIView::Teclat_TransTraslada(UINT nChar, UINT nRepCnt)
 {
@@ -1836,6 +1917,127 @@ void CEntornVGIView::Teclat_TransTraslada(UINT nChar, UINT nRepCnt)
 	}
 }
 
+// Teclat_Hurakan: keys to change the value of hurakanASpeed, hurakanEPower and hurakanGravity
+void CEntornVGIView::Teclat_Hurakan(UINT nChar, UINT nRepCnt) {
+
+	// Chosing the variable
+	if (nChar == VK_RIGHT) {
+		if (hurakanKeyValue > 2)
+			hurakanKeyValue = 2;
+		else
+			hurakanKeyValue++;
+	}
+	else if (nChar == VK_LEFT) {
+		if (hurakanKeyValue < 0)
+			hurakanKeyValue = 0;
+		else
+			hurakanKeyValue--;
+	}
+
+	// increment or decrement the value
+	if (nChar == VK_UP) {
+		switch (hurakanKeyValue)
+		{
+		case 0: {
+			hurakanEPower += 10.0;
+		}break;
+		case 1: {
+			hurakanGravityValue++;
+		}break;
+		case 2: {
+			hurakanMaterial++;
+		}break;
+		}
+	}
+	else if(nChar == VK_DOWN) {
+		switch (hurakanKeyValue)
+		{
+		case 0: {
+			hurakanEPower -= 10.0;
+		}break;
+		case 1: {
+			hurakanGravityValue--;
+		}break;
+		case 2: {
+			hurakanMaterial--;
+		}break;
+		}
+	}
+
+	// adjust the bounds
+	if (hurakanEPower > 2536)
+		hurakanEPower = 2536;
+	else if (hurakanEPower < 25)
+		hurakanEPower = 25;
+
+	if (hurakanGravityValue > 3)
+		hurakanGravityValue = 3;
+	else if (hurakanGravityValue < 0)
+		hurakanGravityValue = 0;
+
+	if (hurakanMaterial > 3)
+		hurakanMaterial = 3;
+	else if (hurakanMaterial < 0)
+		hurakanMaterial = 0;
+
+
+	// Change the view in the screen
+	if (nChar == VK_SPACE) {
+		hurakanViewMode++;
+		if (hurakanViewMode > 2) {
+			hurakanViewMode = 0;
+		}
+	}
+
+	// Change the status of the hurakan
+	if (nChar == VK_RETURN && anima == false) {
+
+		// Set the values to the ones selected and calculate
+		// accelerations and speeds.
+
+		// Set Gravity values from the parameters.
+		if (hurakanGravityValue == 0) {
+			hurakanGravity = Earth;
+		}
+		if (hurakanGravityValue == 1) {
+			hurakanGravity = Moon;
+		}
+		if (hurakanGravityValue == 2) {
+			hurakanGravity = Mars;
+		}
+		if (hurakanGravityValue == 3) {
+			hurakanGravity = Venus;
+		}
+
+		// Set Mass values from the parameters.
+		if (hurakanMaterial == 0) {
+			hurakanMass = Original;
+		}
+		if (hurakanMaterial == 1) {
+			hurakanMass = Steel;
+		}
+		if (hurakanMaterial == 2) {
+			hurakanMass = Aluminium;
+		}
+		if (hurakanMaterial == 3) {
+			hurakanMass = Wood;
+		}
+
+		calculateacceleration(hurakanEPower, hurakanMass, hurakanGravity);
+			
+			// Start the internal clock.
+		anima = true;
+
+			SetTimer(WM_TIMER, 4, NULL);
+		}
+		else if (nChar == VK_RETURN && anima == true) {
+			anima = false;
+			angle1 = 0;
+			angle2 = 0;
+			KillTimer(WM_TIMER);
+		}
+	}
+
 /* ------------------------------------------------------------------------- */
 /*                           MOUSE CONTROL                                   */
 /* ------------------------------------------------------------------------- */
@@ -1927,8 +2129,15 @@ void CEntornVGIView::OnMouseMove(UINT nFlags, CPoint point)
 		OPV.alfa = OPV.alfa + gir.cy / 2;
 
 // GMS Environment: Control per evitar el creixement desmesurat dels angles.
-		if (OPV.alfa >= 360)	OPV.alfa = OPV.alfa - 360;
-		if (OPV.alfa<0)		OPV.alfa = OPV.alfa + 360;
+		if (projeccio == HURAKAN) {
+			if (OPV.alfa >= 170)	OPV.alfa = 170;
+			if (OPV.alfa < 10)		OPV.alfa = 10;
+		}
+		else {
+			if (OPV.alfa >= 180)	OPV.alfa = OPV.alfa - 360;
+			if (OPV.alfa<0)		OPV.alfa = OPV.alfa + 360;
+		}
+		
 		if (OPV.beta >= 360)	OPV.beta = OPV.beta - 360;
 		if (OPV.beta<0)		OPV.beta = OPV.beta + 360;
 		InvalidateRect(NULL, false);
@@ -2142,13 +2351,18 @@ BOOL CEntornVGIView::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 /* ------------------------------------------------------------------------- */
 void CEntornVGIView::OnTimer(UINT_PTR nIDEvent)
 {
-// TODO: Add your message handler code here and/or call default
-	if (anima)	{
-		// Message handler of animation when n ms. have occurred
+	// TODO: Add your message handler code here and/or call default
+	if (anima) {
 
+		if (objecte == HURAKAN) {
+			changeangle();
+			changeangle2();
+			hurakanASpeed = speedupdate();
+		}
+		// Message handler of animation when n ms. have occurred
 		// OnPaint() call to redraw the scene
 		InvalidateRect(NULL, false);
-		}
+	}
 	else if (satelit)	{	// SATELLITE OPTION: OPV increment according mpouse movements
 		//OPV.R = OPV.R + m_EsfeIncEAvall.R;
 		OPV.alfa = OPV.alfa + m_EsfeIncEAvall.alfa;
@@ -2544,7 +2758,39 @@ void CEntornVGIView::OnProjectionHurakan()
 {
 	// TODO: Add your command controller here
 	projeccio = HURAKAN;
-	mobil = true;			zzoom = true;
+	mobil = true;			
+	zzoom = false;
+	textura = true;
+
+	ilumina = GOURAUD;
+	test_vis = false;		oculta = true;
+
+	OPV.R = 500;
+	OPV.alfa = 45;
+
+	// Switch on OpenGL context (from this point OpenGL commands are accepted)
+	wglMakeCurrent(m_pDC->GetSafeHdc(), m_hRC);
+
+	loadIMA("./textures/brick.jpg", 1);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+
+	loadIMA("./textures/roca.jpg", 2);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+
+	// Switch off OpenGL context (from this point accept OpenGL commands are'nt accepted)
+	wglMakeCurrent(m_pDC->GetSafeHdc(), m_hRC);
 
 	// Return to main loop OnPaint() to redraw the scene
 	InvalidateRect(NULL, false);
