@@ -7,6 +7,20 @@
 #ifndef GLSOURCE_H
 #define GLSOURCE_H
 
+
+extern GLfloat legSizeX;
+extern GLfloat legSizeY;
+extern GLfloat legSizeZ;
+extern GLfloat armSizeX;
+extern GLfloat armSizeY;
+extern GLfloat armSizeZ;
+extern GLfloat seatSizeX;
+extern GLfloat seatSizeY;
+extern GLfloat seatSizeZ;
+extern GLfloat offset;
+extern GLfloat angleArm, angleSeat, hurakanSize;
+extern GLfloat radiusSky;
+
 /* ------------------------------------------------------------------------- */
 /*                            Scenes Functions                               */
 /* ------------------------------------------------------------------------- */
@@ -17,7 +31,8 @@ void dibuixa_EscenaGL(char objecte, CColor col_object, bool ref_mat, bool sw_mat
 void dibuixa(char obj);
 
 // GMS Environment: Truck
-void hurakan(bool textu, GLuint VTextu[NUM_MAX_TEXTURES], GLfloat angle1, GLfloat angle2, GLfloat = 1);
+
+void hurakan(bool textu, GLuint VTextu[NUM_MAX_TEXTURES]);
 void changeangle();
 void changeangle2();
 float speedupdate();

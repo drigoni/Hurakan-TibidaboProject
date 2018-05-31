@@ -9,8 +9,15 @@
 #include "material.h"
 #include "escena.h"
 
-float angle1 = 0.0f;
-float angle2 = 0.0f;
+
+// FOrmula  to find angle considering radius 
+GLfloat legSizeX = 2.5, legSizeY = 1, legSizeZ = 12;
+GLfloat armSizeX = 1, armSizeY = 1, armSizeZ = 20;
+GLfloat seatSizeX = 3, seatSizeY = 16, seatSizeZ = 1.5;
+GLfloat offset = 0.5;
+GLfloat angleArm = 0.0f, angleSeat = 0.0f, hurakanSize = 10.0f;
+GLfloat radiusSky = 1000.0f;
+
 float accelTime = 10.0f;
 float hurakanRadius = 12.0f;
 float hurakanIUPower = 0.0f;
@@ -41,7 +48,7 @@ void dibuixa_EscenaGL(char objecte, CColor col_object, bool ref_mat, bool sw_mat
 	{
 // Hurakan drawing
 	case HURAKAN:
-		hurakan(textur, texturID, angle1, angle2, 10);
+		hurakan(textur, texturID);
 		break;
 
 // Truck drawing
@@ -944,12 +951,33 @@ void sea(void)
 
 
 // OBJECTE Hurakan project
-void hurakan(bool textu, GLuint VTextu[NUM_MAX_TEXTURES], GLfloat angleArm, GLfloat angleSeat, GLfloat hurakanSize)
+void hurakan(bool textu, GLuint VTextu[NUM_MAX_TEXTURES])
 {
-	GLfloat legSizeX = 2.5, legSizeY = 1, legSizeZ = 12;
-	GLfloat armSizeX = 1, armSizeY = 1, armSizeZ = 20;
-	GLfloat seatSizeX = 3, seatSizeY = 16, seatSizeZ = 1.5;
-	GLfloat offset = 0.5;
+	double aArm = (2 * pi * fmod(angleArm - 90, 360) / 360.0f);
+	double xArm = (armSizeZ / 2 - seatSizeZ - 0.5) * hurakanSize * -cos(aArm);
+	double zArm = (armSizeZ / 2 - seatSizeZ - 0.5) * hurakanSize * sin(aArm);
+	zArm += (legSizeZ - offset) * hurakanSize;
+
+	double aSeat = (2 * pi * fmod(angleSeat, 360) / 360.0f);
+	double xSeat = (seatSizeZ)* hurakanSize * - cos(aSeat);
+	double zSeat = (seatSizeZ)* hurakanSize * sin(aSeat);
+	double x = xArm + xSeat;
+	double z = zArm + zSeat;
+
+	double xEye = radiusSky * cos(aSeat);
+	double zEye = radiusSky * sin(aSeat);
+
+
+	glPushMatrix();
+	glTranslatef(xArm, 0.0f, zArm);
+	glutSolidSphere(2, 10, 10);
+	glPopMatrix();
+
+
+
+
+
+
 
 	glPushMatrix();
 		glRotatef(270.0, 0.0, 1.0, 0.0);
@@ -962,7 +990,7 @@ void hurakan(bool textu, GLuint VTextu[NUM_MAX_TEXTURES], GLfloat angleArm, GLfl
 			glPushMatrix();
 				//glRotatef(90.0, 0.0, 0.0, 0.0);
 				glBindTexture(GL_TEXTURE_2D, texturID[1]);
-				hemisphere(1000.0, 500, 500);
+				hemisphere(radiusSky, 500, 500);
 			glPopMatrix();
 			glBindTexture(GL_TEXTURE_2D, texturID[1]);
 			glPushMatrix();
@@ -985,9 +1013,9 @@ void hurakan(bool textu, GLuint VTextu[NUM_MAX_TEXTURES], GLfloat angleArm, GLfl
 		glPushMatrix();
 		
 			// Rotate the arms and the seat
-			glTranslatef(0.0f, 0.0f, legSizeZ - 0.5f);
+			glTranslatef(0.0f, 0.0f, legSizeZ - offset);
 			glRotatef(angleArm, 0.0f, 1.0f, 0.0f);
-			glTranslatef(0.0f, 0.0f, -(legSizeZ - 0.5f) );
+			glTranslatef(0.0f, 0.0f, -(legSizeZ - offset) );
 
 			glPushMatrix();
 
@@ -1066,11 +1094,11 @@ void changeangle() {
 		hurakanASpeed += velIncrement;
 		velIncrement = (hurakanASpeed * 0.004);
 		ang1AccelIncrement = hurakanASpeed * 0.016;
-		angle1 += 0.5f * ang1AccelIncrement;
+		angleArm += 0.5f * ang1AccelIncrement;
 	}
 	else if (Turn > 0 && Turn < NTurns) {
 		hurakanASpeed = maxhurakanASpeed;
-		angle1 += ang1Increment;
+		angleArm += ang1Increment;
 	}
 	else if (Turn == NTurns) {
 		hurakanASpeed = maxhurakanASpeed;
@@ -1078,14 +1106,14 @@ void changeangle() {
 		hurakanASpeed -= velIncrement;
 		velIncrement = (hurakanASpeed * 0.004);
 		ang1AccelIncrement = hurakanASpeed * 0.016;
-		angle1 += 0.5f * ang1AccelIncrement;
+		angleArm += 0.5f * ang1AccelIncrement;
 	}
 	else if (Turn > NTurns) {
-		angle1 = 0;
+		angleArm = 0;
 	}
 
-	if (angle1 > 360) {
-		angle1 = angle1 - 360;
+	if (angleArm > 360) {
+		angleArm = angleArm - 360;
 		Turn++;
 	}
 }
@@ -1093,16 +1121,16 @@ void changeangle() {
 void changeangle2() {
 	if (Turn > 0 && Turn < NTurns) {
 		
-		if (angle1 > 45 && angle1 < 260) {
-			angle2 = angle2 + i * 0.03f;
+		if (angleArm > 45 && angleArm < 260) {
+			angleSeat = angleSeat + i * 0.03f;
 			i++;
 		}
 		else {
-			angle2 = 0;
+			angleSeat = 0;
 			i = 0;
 		}
-		if (angle2 > 360) {
-			angle2 = angle2 - 360;
+		if (angleSeat > 360) {
+			angleSeat = angleSeat - 360;
 		}
 	
 	}
@@ -1118,9 +1146,9 @@ void calculateacceleration(GLfloat hurakanEPower, GLfloat hurakanMass,  GLfloat 
 
 	oldASpeed = 0.0f;
 
-	angle1 = 0.0f;
+	angleArm = 0.0f;
 
-	angle2 = 0.0f;
+	angleSeat = 0.0f;
 
 	// Acceleration.
 
