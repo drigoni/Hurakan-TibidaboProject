@@ -18,6 +18,24 @@ GLfloat offset = 0.5;
 GLfloat angleArm = 0.0f, angleSeat = 0.0f, hurakanSize = 10.0f;
 GLfloat radiusSky = 1000.0f;
 
+float accelTime = 10.0f;
+float hurakanRadius = 12.0f;
+float hurakanIUPower = 0.0f;
+float hurakanLAccel = 0.0f;
+float maxhurakanASpeed = 0.0f;
+float radtodeg = 360.0f / (float)TWOPI;
+float maxTurns = 0.0f;
+float velIncrement = 0.0f;
+float ang1Increment = 0.0f;
+float ang1AccelIncrement = 0.0f;
+float hurakanASpeed = 0.0f;
+float oldASpeed = 0.0f;
+float accelTurns = 0.0f;
+int NTurns = 0;
+int Turn = 0;
+int i = 0;
+
+
 // TEXTURES: Vector texture names
 GLuint texturID[NUM_MAX_TEXTURES] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
 
@@ -935,6 +953,32 @@ void sea(void)
 // OBJECTE Hurakan project
 void hurakan(bool textu, GLuint VTextu[NUM_MAX_TEXTURES])
 {
+	double aArm = (2 * pi * fmod(angleArm - 90, 360) / 360.0f);
+	double xArm = (armSizeZ / 2 - seatSizeZ - 0.5) * hurakanSize * -cos(aArm);
+	double zArm = (armSizeZ / 2 - seatSizeZ - 0.5) * hurakanSize * sin(aArm);
+	zArm += (legSizeZ - offset) * hurakanSize;
+
+	double aSeat = (2 * pi * fmod(angleSeat, 360) / 360.0f);
+	double xSeat = (seatSizeZ)* hurakanSize * - cos(aSeat);
+	double zSeat = (seatSizeZ)* hurakanSize * sin(aSeat);
+	double x = xArm + xSeat;
+	double z = zArm + zSeat;
+
+	double xEye = radiusSky * cos(aSeat);
+	double zEye = radiusSky * sin(aSeat);
+
+
+	glPushMatrix();
+	glTranslatef(xArm, 0.0f, zArm);
+	glutSolidSphere(2, 10, 10);
+	glPopMatrix();
+
+
+
+
+
+
+
 	glPushMatrix();
 		glRotatef(270.0, 0.0, 1.0, 0.0);
 		glTranslatef(-25.0f, 0.0f, 0.0f);
@@ -1040,8 +1084,117 @@ void hurakan(bool textu, GLuint VTextu[NUM_MAX_TEXTURES])
 			glutSolidCube(1);
 		glPopMatrix();
 	glPopMatrix();
-	
-
-
-
 }
+
+void changeangle() {
+
+	if (Turn == 0) {
+
+		oldASpeed = hurakanASpeed;
+		hurakanASpeed += velIncrement;
+		velIncrement = (hurakanASpeed * 0.004);
+		ang1AccelIncrement = hurakanASpeed * 0.016;
+		angleArm += 0.5f * ang1AccelIncrement;
+	}
+	else if (Turn > 0 && Turn < NTurns) {
+		hurakanASpeed = maxhurakanASpeed;
+		angleArm += ang1Increment;
+	}
+	else if (Turn == NTurns) {
+		hurakanASpeed = maxhurakanASpeed;
+		oldASpeed = hurakanASpeed;
+		hurakanASpeed -= velIncrement;
+		velIncrement = (hurakanASpeed * 0.004);
+		ang1AccelIncrement = hurakanASpeed * 0.016;
+		angleArm += 0.5f * ang1AccelIncrement;
+	}
+	else if (Turn > NTurns) {
+		angleArm = 0;
+	}
+
+	if (angleArm > 360) {
+		angleArm = angleArm - 360;
+		Turn++;
+	}
+}
+
+void changeangle2() {
+	if (Turn > 0 && Turn < NTurns) {
+		
+		if (angleArm > 45 && angleArm < 260) {
+			angleSeat = angleSeat + i * 0.03f;
+			i++;
+		}
+		else {
+			angleSeat = 0;
+			i = 0;
+		}
+		if (angleSeat > 360) {
+			angleSeat = angleSeat - 360;
+		}
+	
+	}
+}
+
+float speedupdate() {
+	return hurakanASpeed;
+}
+
+void calculateacceleration(GLfloat hurakanEPower, GLfloat hurakanMass,  GLfloat hurakanGravity) {
+
+	Turn = 0;
+
+	oldASpeed = 0.0f;
+
+	angleArm = 0.0f;
+
+	angleSeat = 0.0f;
+
+	// Acceleration.
+
+	// Convert Power to IU.
+
+	hurakanIUPower = hurakanEPower * 765;
+
+
+	// Calculate the acceleration.
+
+	hurakanLAccel = (hurakanIUPower * accelTime) / (hurakanMass * hurakanRadius * (float)TWOPI);
+
+	// Angular velocity.
+
+	// Calculate the maximum angular speed.
+
+	maxhurakanASpeed = (sqrt(hurakanGravity / hurakanRadius) + sqrt(hurakanLAccel / hurakanRadius)) * radtodeg;
+
+	// Turns made during the animation, excluding the acceleration and deceleration.
+
+	// Calculate number of turns.
+
+	maxTurns = ceilf((maxhurakanASpeed * 90 / 360) * 1) / 1;
+
+	NTurns = (int)maxTurns;
+
+	// Increment in angle and velocity for position calculation.
+
+	// Calculate the number of frames to do the animation.
+
+	velIncrement = (maxhurakanASpeed / accelTime) * 0.016f;
+
+	ang1Increment = ((maxTurns * 360.0f) / 90.0f) * 0.016f;
+}
+
+	//OBJECTE Engine for the Hurakan, demonstration of how it moves.
+/*void engine(bool textu, GLuint VTextu[NUM_MAX_TEXTURES]) {
+
+	//Draw the engine inmobile part.
+	//Draw the base of the engine.
+	glPushMatrix();
+	glScalef((float)sqrt(), 8.0f, 4.0f);
+	glutSolidCube(1);
+	glPopMatrix();
+
+	glPopMatrix();
+}*/
+
+

@@ -1065,18 +1065,18 @@ void CEntornVGIView::Barra_Estat()
 	}
 	else {
 		// Hurakan values
-		buffer.Format(_T("%.1f"), hurakanEPower);
+		buffer.Format(_T("%.0f"), hurakanEPower);
 		sss = _T("   ") + buffer + _T("   ");
 
-		buffer.Format(_T("%.1f"), hurakanGravity);
+		buffer.Format(_T("%i"), hurakanGravityValue);
 		sss = sss + buffer + _T("   ");
 
 		buffer.Format(_T("%i"), hurakanMaterial);
 		sss = sss + buffer + _T("   ");
 
 		GLfloat tmp = round(hurakanASpeed * 10.0)/10.0;
-		if (tmp >= 100) tmp = 99.9;
-		else if (tmp <= -100) tmp = -99.9;
+		if (tmp >= 200) tmp = 199.9;
+		else if (tmp <= 0) tmp = 0;
 		buffer.Format(_T("%.1f"), tmp);
 		sss = sss + buffer + _T("   ");
 	}
@@ -1939,12 +1939,10 @@ void CEntornVGIView::Teclat_Hurakan(UINT nChar, UINT nRepCnt) {
 		switch (hurakanKeyValue)
 		{
 		case 0: {
-			hurakanEPower += 0.1;
-			angleArm += 1;
+			hurakanEPower += 10.0;
 		}break;
 		case 1: {
-			hurakanGravity += 0.1;
-			angleSeat += 1;
+			hurakanGravityValue++;
 		}break;
 		case 2: {
 			hurakanMaterial++;
@@ -1955,12 +1953,10 @@ void CEntornVGIView::Teclat_Hurakan(UINT nChar, UINT nRepCnt) {
 		switch (hurakanKeyValue)
 		{
 		case 0: {
-			hurakanEPower -= 0.1;
-			angleArm -= 1;
+			hurakanEPower -= 10.0;
 		}break;
 		case 1: {
-			hurakanGravity -= 0.1;
-			angleSeat -= 1;
+			hurakanGravityValue--;
 		}break;
 		case 2: {
 			hurakanMaterial--;
@@ -1969,15 +1965,15 @@ void CEntornVGIView::Teclat_Hurakan(UINT nChar, UINT nRepCnt) {
 	}
 
 	// adjust the bounds
-	if (hurakanEPower > 100)
-		hurakanEPower = 100;
-	else if (hurakanEPower < 0)
-		hurakanEPower = 0;
+	if (hurakanEPower > 2536)
+		hurakanEPower = 2536;
+	else if (hurakanEPower < 25)
+		hurakanEPower = 25;
 
-	if (hurakanGravity > 100)
-		hurakanGravity = 100;
-	else if (hurakanGravity < 0)
-		hurakanGravity = 0;
+	if (hurakanGravityValue > 3)
+		hurakanGravityValue = 3;
+	else if (hurakanGravityValue < 0)
+		hurakanGravityValue = 0;
 
 	if (hurakanMaterial > 3)
 		hurakanMaterial = 3;
@@ -1994,12 +1990,53 @@ void CEntornVGIView::Teclat_Hurakan(UINT nChar, UINT nRepCnt) {
 	}
 
 	// Change the status of the hurakan
-	if (nChar == VK_RETURN) {
-		hurakanStatus = !hurakanStatus;
+	if (nChar == VK_RETURN && anima == false) {
+
+		// Set the values to the ones selected and calculate
+		// accelerations and speeds.
+
+		// Set Gravity values from the parameters.
+		if (hurakanGravityValue == 0) {
+			hurakanGravity = Earth;
+		}
+		if (hurakanGravityValue == 1) {
+			hurakanGravity = Moon;
+		}
+		if (hurakanGravityValue == 2) {
+			hurakanGravity = Mars;
+		}
+		if (hurakanGravityValue == 3) {
+			hurakanGravity = Venus;
+		}
+
+		// Set Mass values from the parameters.
+		if (hurakanMaterial == 0) {
+			hurakanMass = Original;
+		}
+		if (hurakanMaterial == 1) {
+			hurakanMass = Steel;
+		}
+		if (hurakanMaterial == 2) {
+			hurakanMass = Aluminium;
+		}
+		if (hurakanMaterial == 3) {
+			hurakanMass = Wood;
+		}
+
+		calculateacceleration(hurakanEPower, hurakanMass, hurakanGravity);
+			
+			// Start the internal clock.
+		anima = true;
+
+			SetTimer(WM_TIMER, 4, NULL);
+		}
+		else if (nChar == VK_RETURN && anima == true) {
+			anima = false;
+			angle1 = 0;
+			angle2 = 0;
+			KillTimer(WM_TIMER);
+		}
 	}
-
-
-}
 
 /* ------------------------------------------------------------------------- */
 /*                           MOUSE CONTROL                                   */
@@ -2314,13 +2351,18 @@ BOOL CEntornVGIView::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 /* ------------------------------------------------------------------------- */
 void CEntornVGIView::OnTimer(UINT_PTR nIDEvent)
 {
-// TODO: Add your message handler code here and/or call default
-	if (anima)	{
-		// Message handler of animation when n ms. have occurred
+	// TODO: Add your message handler code here and/or call default
+	if (anima) {
 
+		if (objecte == HURAKAN) {
+			changeangle();
+			changeangle2();
+			hurakanASpeed = speedupdate();
+		}
+		// Message handler of animation when n ms. have occurred
 		// OnPaint() call to redraw the scene
 		InvalidateRect(NULL, false);
-		}
+	}
 	else if (satelit)	{	// SATELLITE OPTION: OPV increment according mpouse movements
 		//OPV.R = OPV.R + m_EsfeIncEAvall.R;
 		OPV.alfa = OPV.alfa + m_EsfeIncEAvall.alfa;

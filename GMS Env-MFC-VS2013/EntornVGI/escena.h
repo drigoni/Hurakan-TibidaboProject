@@ -31,7 +31,12 @@ void dibuixa_EscenaGL(char objecte, CColor col_object, bool ref_mat, bool sw_mat
 void dibuixa(char obj);
 
 // GMS Environment: Truck
+
 void hurakan(bool textu, GLuint VTextu[NUM_MAX_TEXTURES]);
+void changeangle();
+void changeangle2();
+float speedupdate();
+void calculateacceleration(GLfloat hurakanEPower, GLfloat hurakanMass, GLfloat hurakanGravity);
 void truck(bool textu,GLuint VTextu[NUM_MAX_TEXTURES]);
 void neumatic(bool textur, GLuint VTextur[NUM_MAX_TEXTURES]);
 void llanta(bool textur, GLuint VTextur[NUM_MAX_TEXTURES]);
