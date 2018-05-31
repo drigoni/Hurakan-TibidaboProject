@@ -18,6 +18,10 @@ void dibuixa(char obj);
 
 // GMS Environment: Truck
 void hurakan(bool textu, GLuint VTextu[NUM_MAX_TEXTURES], GLfloat angle1, GLfloat angle2, GLfloat = 1);
+void changeangle();
+void changeangle2();
+float speedupdate();
+void calculateacceleration(GLfloat hurakanEPower, GLfloat hurakanMass, GLfloat hurakanGravity);
 void truck(bool textu,GLuint VTextu[NUM_MAX_TEXTURES]);
 void neumatic(bool textur, GLuint VTextur[NUM_MAX_TEXTURES]);
 void llanta(bool textur, GLuint VTextur[NUM_MAX_TEXTURES]);

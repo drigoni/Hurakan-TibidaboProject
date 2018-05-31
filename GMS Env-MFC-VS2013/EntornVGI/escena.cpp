@@ -9,6 +9,26 @@
 #include "material.h"
 #include "escena.h"
 
+float angle1 = 0.0f;
+float angle2 = 0.0f;
+float accelTime = 10.0f;
+float hurakanRadius = 12.0f;
+float hurakanIUPower = 0.0f;
+float hurakanLAccel = 0.0f;
+float maxhurakanASpeed = 0.0f;
+float radtodeg = 360.0f / (float)TWOPI;
+float maxTurns = 0.0f;
+float velIncrement = 0.0f;
+float ang1Increment = 0.0f;
+float ang1AccelIncrement = 0.0f;
+float hurakanASpeed = 0.0f;
+float oldASpeed = 0.0f;
+float accelTurns = 0.0f;
+int NTurns = 0;
+int Turn = 0;
+int i = 0;
+
+
 // TEXTURES: Vector texture names
 GLuint texturID[NUM_MAX_TEXTURES] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
 
@@ -21,7 +41,7 @@ void dibuixa_EscenaGL(char objecte, CColor col_object, bool ref_mat, bool sw_mat
 	{
 // Hurakan drawing
 	case HURAKAN:
-		hurakan(textur, texturID, 0, 0, 10);
+		hurakan(textur, texturID, angle1, angle2, 10);
 		break;
 
 // Truck drawing
@@ -1036,8 +1056,117 @@ void hurakan(bool textu, GLuint VTextu[NUM_MAX_TEXTURES], GLfloat angleArm, GLfl
 			glutSolidCube(1);
 		glPopMatrix();
 	glPopMatrix();
-	
-
-
-
 }
+
+void changeangle() {
+
+	if (Turn == 0) {
+
+		oldASpeed = hurakanASpeed;
+		hurakanASpeed += velIncrement;
+		velIncrement = (hurakanASpeed * 0.004);
+		ang1AccelIncrement = hurakanASpeed * 0.016;
+		angle1 += 0.5f * ang1AccelIncrement;
+	}
+	else if (Turn > 0 && Turn < NTurns) {
+		hurakanASpeed = maxhurakanASpeed;
+		angle1 += ang1Increment;
+	}
+	else if (Turn == NTurns) {
+		hurakanASpeed = maxhurakanASpeed;
+		oldASpeed = hurakanASpeed;
+		hurakanASpeed -= velIncrement;
+		velIncrement = (hurakanASpeed * 0.004);
+		ang1AccelIncrement = hurakanASpeed * 0.016;
+		angle1 += 0.5f * ang1AccelIncrement;
+	}
+	else if (Turn > NTurns) {
+		angle1 = 0;
+	}
+
+	if (angle1 > 360) {
+		angle1 = angle1 - 360;
+		Turn++;
+	}
+}
+
+void changeangle2() {
+	if (Turn > 0 && Turn < NTurns) {
+		
+		if (angle1 > 45 && angle1 < 260) {
+			angle2 = angle2 + i * 0.03f;
+			i++;
+		}
+		else {
+			angle2 = 0;
+			i = 0;
+		}
+		if (angle2 > 360) {
+			angle2 = angle2 - 360;
+		}
+	
+	}
+}
+
+float speedupdate() {
+	return hurakanASpeed;
+}
+
+void calculateacceleration(GLfloat hurakanEPower, GLfloat hurakanMass,  GLfloat hurakanGravity) {
+
+	Turn = 0;
+
+	oldASpeed = 0.0f;
+
+	angle1 = 0.0f;
+
+	angle2 = 0.0f;
+
+	// Acceleration.
+
+	// Convert Power to IU.
+
+	hurakanIUPower = hurakanEPower * 765;
+
+
+	// Calculate the acceleration.
+
+	hurakanLAccel = (hurakanIUPower * accelTime) / (hurakanMass * hurakanRadius * (float)TWOPI);
+
+	// Angular velocity.
+
+	// Calculate the maximum angular speed.
+
+	maxhurakanASpeed = (sqrt(hurakanGravity / hurakanRadius) + sqrt(hurakanLAccel / hurakanRadius)) * radtodeg;
+
+	// Turns made during the animation, excluding the acceleration and deceleration.
+
+	// Calculate number of turns.
+
+	maxTurns = ceilf((maxhurakanASpeed * 90 / 360) * 1) / 1;
+
+	NTurns = (int)maxTurns;
+
+	// Increment in angle and velocity for position calculation.
+
+	// Calculate the number of frames to do the animation.
+
+	velIncrement = (maxhurakanASpeed / accelTime) * 0.016f;
+
+	ang1Increment = ((maxTurns * 360.0f) / 90.0f) * 0.016f;
+}
+
+	//OBJECTE Engine for the Hurakan, demonstration of how it moves.
+/*void engine(bool textu, GLuint VTextu[NUM_MAX_TEXTURES]) {
+
+	//Draw the engine inmobile part.
+	//Draw the base of the engine.
+	glPushMatrix();
+	glScalef((float)sqrt(), 8.0f, 4.0f);
+	glutSolidCube(1);
+	glPopMatrix();
+
+	glPopMatrix();
+}*/
+
+
