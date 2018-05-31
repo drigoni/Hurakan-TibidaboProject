@@ -951,7 +951,6 @@ void hurakan(bool textu, GLuint VTextu[NUM_MAX_TEXTURES], GLfloat angleArm, GLfl
 	GLfloat seatSizeX = 3, seatSizeY = 16, seatSizeZ = 1.5;
 	GLfloat offset = 0.5;
 
-
 	glPushMatrix();
 		glRotatef(270.0, 0.0, 1.0, 0.0);
 		glTranslatef(-25.0f, 0.0f, 0.0f);
@@ -1169,3 +1168,5 @@ void calculateacceleration(GLfloat hurakanEPower, GLfloat hurakanMass,  GLfloat 
 
 	glPopMatrix();
 }*/
+
+
