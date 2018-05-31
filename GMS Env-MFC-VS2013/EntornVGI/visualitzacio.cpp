@@ -210,21 +210,22 @@ void Vista_Hurakan(GLfloat Raux, CColor col_fons, CColor col_object, char object
 	if (!ifix) Iluminacio(iluminacio, ifix, llum_amb, lumi, textur, textur_map, objecte, bck_ln, step);
 	// calculate the position of the sit and use these coordinates to put the camera 1-3
 	double aArm = (2 * pi * fmod(angleArm - 90, 360) / 360.0f);
-	double xArm = (armSizeZ / 2 - seatSizeZ - 0.5) * hurakanSize * -cos(aArm);
-	double zArm = (armSizeZ / 2 - seatSizeZ - 0.5) * hurakanSize * sin(aArm);
+	double xArm = (armSizeZ / 2 - seatSizeZ / 2 - 0.5) * hurakanSize * -cos(aArm);
+	double zArm = (armSizeZ / 2 - seatSizeZ / 2 - 0.5) * hurakanSize * sin(aArm);
 	zArm += (legSizeZ - offset) * hurakanSize;
 
-	double aSeat = (2 * pi * fmod(angleSeat, 360) / 360.0f);
-	double xSeat = (seatSizeZ)* hurakanSize * -cos(aSeat);
-	double zSeat = (seatSizeZ)* hurakanSize * sin(aSeat);
+	double aSeat = (2 * pi * fmod(angleSeat + angleArm + 90, 360) / 360.0f);
+	double xSeat = (seatSizeZ / 2)* hurakanSize * -cos(aSeat);
+	double zSeat = (seatSizeZ / 2)* hurakanSize * sin(aSeat);
 	double x = xArm + xSeat;
 	double z = zArm + zSeat;
-	
-	double xEye = radiusSky * cos(aSeat);
-	double zEye = radiusSky * sin(aSeat);
+
+	double aEye = (2 * pi * fmod(angleSeat, 360) / 360.0f);
+	double xEye = radiusSky * cos(aEye);
+	double zEye = radiusSky * sin(aEye);
 
 	// min 1 or plus 1 the last value
-	gluLookAt(xArm + 1, 0.0, zArm + 1, xEye, 0.0, zEye, 0.0, 0.0, 1);
+	gluLookAt(x + 1, 0.0, z + 1, xEye, 0.0, zEye, 0.0, 0.0, 1);
 
 	// Clear the color and depth buffers.
 	Fons(col_fons);

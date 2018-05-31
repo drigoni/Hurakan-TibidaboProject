@@ -953,14 +953,14 @@ void sea(void)
 // OBJECTE Hurakan project
 void hurakan(bool textu, GLuint VTextu[NUM_MAX_TEXTURES])
 {
-	double aArm = (2 * pi * fmod(angleArm - 90, 360) / 360.0f);
-	double xArm = (armSizeZ / 2 - seatSizeZ - 0.5) * hurakanSize * -cos(aArm);
-	double zArm = (armSizeZ / 2 - seatSizeZ - 0.5) * hurakanSize * sin(aArm);
+	/*double aArm = (2 * pi * fmod(angleArm - 90, 360) / 360.0f);
+	double xArm = (armSizeZ / 2 - seatSizeZ/2 - 0.5) * hurakanSize * -cos(aArm);
+	double zArm = (armSizeZ / 2 - seatSizeZ/2 - 0.5) * hurakanSize * sin(aArm);
 	zArm += (legSizeZ - offset) * hurakanSize;
 
-	double aSeat = (2 * pi * fmod(angleSeat, 360) / 360.0f);
-	double xSeat = (seatSizeZ)* hurakanSize * - cos(aSeat);
-	double zSeat = (seatSizeZ)* hurakanSize * sin(aSeat);
+	double aSeat = (2 * pi * fmod(angleSeat + angleArm + 90, 360) / 360.0f);
+	double xSeat = (seatSizeZ/2)* hurakanSize * - cos(aSeat);
+	double zSeat = (seatSizeZ/2)* hurakanSize * sin(aSeat);
 	double x = xArm + xSeat;
 	double z = zArm + zSeat;
 
@@ -969,9 +969,9 @@ void hurakan(bool textu, GLuint VTextu[NUM_MAX_TEXTURES])
 
 
 	glPushMatrix();
-	glTranslatef(xArm, 0.0f, zArm);
+	glTranslatef(x, 0.0f, z);
 	glutSolidSphere(2, 10, 10);
-	glPopMatrix();
+	glPopMatrix();*/
 
 
 
