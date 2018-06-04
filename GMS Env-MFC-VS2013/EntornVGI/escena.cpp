@@ -1183,18 +1183,3 @@ void calculateacceleration(GLfloat hurakanEPower, GLfloat hurakanMass,  GLfloat 
 
 	ang1Increment = ((maxTurns * 360.0f) / 90.0f) * 0.016f;
 }
-
-	//OBJECTE Engine for the Hurakan, demonstration of how it moves.
-/*void engine(bool textu, GLuint VTextu[NUM_MAX_TEXTURES]) {
-
-	//Draw the engine inmobile part.
-	//Draw the base of the engine.
-	glPushMatrix();
-	glScalef((float)sqrt(), 8.0f, 4.0f);
-	glutSolidCube(1);
-	glPopMatrix();
-
-	glPopMatrix();
-}*/
-
-

@@ -147,6 +147,10 @@ BEGIN_MESSAGE_MAP(CEntornVGIView, CView)
 		ON_UPDATE_COMMAND_UI(ID_PROJECTION_HURAKAN, &CEntornVGIView::OnUpdateProjectionHurakan)
 		ON_COMMAND(ID_OBJECT_HURAKAN, &CEntornVGIView::OnObjectHurakan)
 		ON_UPDATE_COMMAND_UI(ID_OBJECT_HURAKAN, &CEntornVGIView::OnUpdateObjectHurakan)
+		ON_COMMAND(ID_OBJECT_HANOITOWER, &CEntornVGIView::OnObjectHanoitower)
+		ON_UPDATE_COMMAND_UI(ID_OBJECT_HANOITOWER, &CEntornVGIView::OnUpdateObjectHanoitower)
+		ON_COMMAND(ID_PROJECTION_HANOI, &CEntornVGIView::OnProjectionHanoi)
+		ON_UPDATE_COMMAND_UI(ID_PROJECTION_HANOI, &CEntornVGIView::OnUpdateProjectionHanoi)
 		END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -2804,6 +2808,24 @@ void CEntornVGIView::OnUpdateProjectionHurakan(CCmdUI *pCmdUI)
 	else pCmdUI->SetCheck(0);
 }
 
+void CEntornVGIView::OnProjectionHanoi()
+{
+	// TODO: Add your command controller here
+	projeccio = ORTO;
+	mobil = true;			zzoom = true;
+
+	// Return to main loop OnPaint() to redraw the scene
+	InvalidateRect(NULL, false);
+}
+
+
+void CEntornVGIView::OnUpdateProjectionHanoi(CCmdUI *pCmdUI)
+{
+	// TODO: Agregue aquí su código de controlador de IU para actualización de comandos
+	if (projeccio == HANOI) pCmdUI->SetCheck(1);
+	else pCmdUI->SetCheck(0);
+}
+
 
 
 /* ------------------------------------------------------------------------- */
@@ -2924,6 +2946,27 @@ void CEntornVGIView::OnUpdateObjectHurakan(CCmdUI *pCmdUI)
 	if (objecte == HURAKAN) pCmdUI->SetCheck(1);
 	else pCmdUI->SetCheck(0);
 }
+
+void CEntornVGIView::OnObjectHanoitower()
+{
+	objecte = HANOI;
+
+	OnProjectionHurakan();
+	//	---- Entorn GMS: PAY ATTENTION!!. To change the scale of the object to fit it in the Volume of Visualization (-1,1,-1,1,-1,1) (Orthographic Views)
+
+	//  ---- Entorn GMS: PAY ATTENTION!!. Modify R parameter of Point of View to fit the object in screen (Perspective, Axonometric projections)
+	// Return to main loop OnPaint() to redraw the scene
+	InvalidateRect(NULL, false);
+}
+
+
+void CEntornVGIView::OnUpdateObjectHanoitower(CCmdUI *pCmdUI)
+{
+	// TODO: Agregue aquí su código de controlador de IU para actualización de comandos
+	if (objecte == HANOI) pCmdUI->SetCheck(1);
+	else pCmdUI->SetCheck(0);
+}
+
 
 
 
@@ -3693,5 +3736,9 @@ void CEntornVGIView::Refl_MaterialOn()
 	sw_material[2] = sw_material_old[2];
 	sw_material[3] = sw_material_old[3];
 }
+
+
+
+
 
 
