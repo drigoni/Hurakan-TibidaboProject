@@ -133,6 +133,9 @@
     <ClInclude Include="escena.h" />
     <ClInclude Include="FileView.h" />
     <ClInclude Include="glut_geometry.h" />
+    <ClInclude Include="HanoiGame.h" />
+    <ClInclude Include="HanoiPiece.h" />
+    <ClInclude Include="HanoiTower.h" />
     <ClInclude Include="Load3DS.h" />
     <ClInclude Include="MainFrm.h" />
     <ClInclude Include="material.h" />
@@ -155,6 +158,9 @@
     <ClCompile Include="escena.cpp" />
     <ClCompile Include="FileView.cpp" />
     <ClCompile Include="glut_geometry.cpp" />
+    <ClCompile Include="HanoiGame.cpp" />
+    <ClCompile Include="HanoiPiece.cpp" />
+    <ClCompile Include="HanoiTower.cpp" />
     <ClCompile Include="Load3DS.cpp" />
     <ClCompile Include="MainFrm.cpp" />
     <ClCompile Include="material.cpp" />

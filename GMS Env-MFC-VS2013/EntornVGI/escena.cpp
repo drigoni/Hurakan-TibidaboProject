@@ -8,6 +8,7 @@
 #include "stdafx.h"
 #include "material.h"
 #include "escena.h"
+#include "HanoiGame.h"
 
 float elbowz = 0.0f;
 float elbowx = 0.0f;
@@ -41,6 +42,11 @@ void dibuixa_EscenaGL(char objecte, CColor col_object, bool ref_mat, bool sw_mat
 
 	switch (objecte)
 	{
+// HANOI case
+	case HANOI:
+		HanoiGame::Draw();
+		break;
+
 // Hurikan drawing
 	case HURIKAN:
 		glDisable(GL_TEXTURE_2D);

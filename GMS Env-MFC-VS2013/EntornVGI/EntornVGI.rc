@@ -17,7 +17,7 @@
 #undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
-// Español (España, alfabetización internacional) resources
+// Spagnolo (Spagna, internazionale) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ESN)
 LANGUAGE LANG_SPANISH, SUBLANG_SPANISH_MODERN
@@ -346,6 +346,7 @@ BEGIN
         MENUITEM "Truck",                       32790, CHECKED
         MENUITEM "Hurikan",                     ID_OBJECT_HURIKAN, CHECKED
         MENUITEM "Robot",                       32833, CHECKED
+        MENUITEM "Hanoi",                       ID_OBJECT_HANOI, CHECKED
     END
     POPUP "Transform"
     BEGIN
@@ -744,7 +745,7 @@ BEGIN
     IDS_FIND_TAB            "Buscar"
 END
 
-#endif    // Español (España, alfabetización internacional) resources
+#endif    // Spagnolo (Spagna, internazionale) resources
 /////////////////////////////////////////////////////////////////////////////
 
 

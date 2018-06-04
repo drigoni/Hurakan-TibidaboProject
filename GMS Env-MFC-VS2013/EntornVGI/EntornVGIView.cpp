@@ -30,6 +30,7 @@
 #include "EntornVGIView.h"
 #include "visualitzacio.h"	// Include funcions de projeció i il.luminació
 #include "escena.h"			// Include funcions d'objectes OpenGL
+#include "HanoiGame.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -163,6 +164,8 @@ BEGIN_MESSAGE_MAP(CEntornVGIView, CView)
 		ON_COMMAND(ID_NEGATIVE_WRISTY, &CEntornVGIView::OnNegativeWristy)
 		ON_COMMAND(ID_NEGATIVE_WRISTZ, &CEntornVGIView::OnNegativeWristz)
 		ON_COMMAND(ID_CLOSE_CLAMP, &CEntornVGIView::OnCloseClamp)
+		ON_COMMAND(ID_OBJECT_HANOI, &CEntornVGIView::OnObjectHanoi)
+		ON_UPDATE_COMMAND_UI(ID_OBJECT_HANOI, &CEntornVGIView::OnUpdateObjectHanoi)
 		END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -908,80 +911,100 @@ void CEntornVGIView::Barra_Estat()
 
 // Status Bar to give the Geometrical Transform type (TRAS, ROT, ESC)
 	sss = " ";
-	if (transf) {
-		if (rota) sss = "ROT";
-		else if (trasl) sss = "TRA";
-		else if (escal) sss = "ESC";
+	if (objecte != HANOI) {
+		if (transf) {
+			if (rota) sss = "ROT";
+			else if (trasl) sss = "TRA";
+			else if (escal) sss = "ESC";
+		}
+		else {
+			// Components d'intensitat de fons que varien per teclat
+			if ((fonsR) && (fonsG) && (fonsB)) sss = " RGB";
+			else if ((fonsR) && (fonsG)) sss = " RG ";
+			else if ((fonsR) && (fonsB)) sss = " R   B";
+			else if ((fonsG) && (fonsB)) sss = "   GB";
+			else if (fonsR) sss = " R  ";
+			else if (fonsG) sss = "   G ";
+			else if (fonsB) sss = "      B";
+		}
 	}
 	else {
-		// Components d'intensitat de fons que varien per teclat
-		if ((fonsR) && (fonsG) && (fonsB)) sss = " RGB";
-		else if ((fonsR) && (fonsG)) sss = " RG ";
-		else if ((fonsR) && (fonsB)) sss = " R   B";
-		else if ((fonsG) && (fonsB)) sss = "   GB";
-		else if (fonsR) sss = " R  ";
-		else if (fonsG) sss = "   G ";
-		else if (fonsB) sss = "      B";
+		sss = "N.P.";
 	}
 // Update Transformations mode of Status Bar
 	GetStatusBar().SetPaneText(8, sss);
 
 // Status Bar of the parameters of Transform, Color and positions of Robot and human leg.
 	sss = " ";
-	if (transf)
-	{	if (rota)
-		{	buffer.Format(_T("%.1f"), TG.VRota.x);
-			sss = _T("  ") + buffer + _T("   ");
+	if (objecte != HANOI) {
+		if (transf)
+		{
+			if (rota)
+			{
+				buffer.Format(_T("%.1f"), TG.VRota.x);
+				sss = _T("  ") + buffer + _T("   ");
 
-			buffer.Format(_T("%.1f"), TG.VRota.y);
-			sss = sss + buffer + _T("   ");
+				buffer.Format(_T("%.1f"), TG.VRota.y);
+				sss = sss + buffer + _T("   ");
 
-			buffer.Format(_T("%.1f"), TG.VRota.z);
-			sss = sss + buffer;
+				buffer.Format(_T("%.1f"), TG.VRota.z);
+				sss = sss + buffer;
+			}
+			else if (trasl)
+			{
+				buffer.Format(_T("%.1f"), TG.VTras.x);
+				sss = _T("  ") + buffer + _T("   ");
+
+				buffer.Format(_T("%.1f"), TG.VTras.y);
+				sss = sss + buffer + _T("   ");
+
+				buffer.Format(_T("%.1f"), TG.VTras.z);
+				sss = sss + buffer;
+			}
+			else if (escal)
+			{
+				buffer.Format(_T("%.2f"), TG.VScal.x);
+				sss = _T(" ") + buffer + _T("  ");
+
+				buffer.Format(_T("%.2f"), TG.VScal.y);
+				sss = sss + buffer + _T("  ");
+
+				buffer.Format(_T("%.2f"), TG.VScal.x);
+				sss = sss + buffer;
+			}
 		}
-		else if (trasl)
-		{	buffer.Format(_T("%.1f"), TG.VTras.x);
-			sss = _T("  ") + buffer + _T("   ");
+		else {	// Background Color
+			if (!sw_color)
+			{
+				buffer.Format(_T("%.3f"), c_fons.r);
+				sss = _T(" ") + buffer + _T("  ");
 
-			buffer.Format(_T("%.1f"), TG.VTras.y);
-			sss = sss + buffer + _T("   ");
+				buffer.Format(_T("%.3f"), c_fons.g);
+				sss = sss + buffer + _T("  ");
 
-			buffer.Format(_T("%.1f"), TG.VTras.z);
-			sss = sss + buffer;
-		}
-		else if (escal)
-		{	buffer.Format(_T("%.2f"), TG.VScal.x);
-			sss = _T(" ") + buffer + _T("  ");
+				buffer.Format(_T("%.3f"), c_fons.b);
+				sss = sss + buffer;
+			}
+			else
+			{	// Object Color
+				buffer.Format(_T("%.3f"), col_obj.r);
+				sss = _T(" ") + buffer + _T("  ");
 
-			buffer.Format(_T("%.2f"), TG.VScal.y);
-			sss = sss + buffer + _T("  ");
+				buffer.Format(_T("%.3f"), col_obj.g);
+				sss = sss + buffer + _T("  ");
 
-			buffer.Format(_T("%.2f"), TG.VScal.x);
-			sss = sss + buffer;
+				buffer.Format(_T("%.3f"), col_obj.b);
+				sss = sss + buffer;
+			}
 		}
 	}
-	else {	// Background Color
-		if (!sw_color)
-		{	buffer.Format(_T("%.3f"), c_fons.r);
-			sss = _T(" ") + buffer + _T("  ");
+	else
+	{ //TODO HANOI
+		buffer.Format(_T("%i"), HanoiGame::getN());
+		sss = _T("  ") + buffer + _T("   ");
 
-			buffer.Format(_T("%.3f"), c_fons.g);
-			sss = sss + buffer + _T("  ");
-
-			buffer.Format(_T("%.3f"), c_fons.b);
-			sss = sss + buffer;
-		}
-		else
-		{	// Object Color
-			buffer.Format(_T("%.3f"), col_obj.r);
-			sss = _T(" ") + buffer + _T("  ");
-
-			buffer.Format(_T("%.3f"), col_obj.g);
-			sss = sss + buffer + _T("  ");
-
-			buffer.Format(_T("%.3f"), col_obj.b);
-			sss = sss + buffer;
-		}
+		buffer.Format(_T("%i"), HanoiGame::getNKeyboard());
+		sss = sss + buffer + _T("  ");
 	}
 
 // Update Background or object Color of Status Bar
@@ -1182,6 +1205,9 @@ void CEntornVGIView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 		}
 	if (objecte == ROBOT) {
 		CEntornVGIView::Teclat_Robot(nChar, nRepCnt);
+	}
+	if (objecte == HANOI) {
+		HanoiGame::Keyboard(nChar, nRepCnt);
 	}
 
 // OnPaint() call to redraw the scene
@@ -1529,6 +1555,10 @@ void CEntornVGIView::Teclat_Robot(UINT nChar, UINT nRepCnt)
 		}
 	}
 
+}
+
+void CEntornVGIView::Teclat_HanoiTower(UINT nChar, UINT nRepCnt) {
+	HanoiGame::Keyboard(nChar, nRepCnt);
 }
 
 
@@ -2832,6 +2862,30 @@ void CEntornVGIView::OnUpdateObjectHurikan(CCmdUI *pCmdUI)
 }
 
 
+void CEntornVGIView::OnObjectHanoi()
+{
+	//Prospective
+	projeccio = PERSPECT;
+
+	//Object
+	objecte = HANOI;
+
+	//Light
+	ilumina = GOURAUD;
+	test_vis = false;		oculta = true;
+
+	InvalidateRect(NULL, false);
+}
+
+
+void CEntornVGIView::OnUpdateObjectHanoi(CCmdUI *pCmdUI)
+{
+	// TODO: Agregue aquí su código de controlador de IU para actualización de comandos
+	if (objecte == HANOI) pCmdUI->SetCheck(1);
+	else pCmdUI->SetCheck(0);
+}
+
+
 
 /* ------------------------------------------------------------------------- */
 /*					6. TRANSFORM											 */
@@ -3729,4 +3783,5 @@ void CEntornVGIView::Refl_MaterialOn()
 	sw_material[2] = sw_material_old[2];
 	sw_material[3] = sw_material_old[3];
 }
+
 

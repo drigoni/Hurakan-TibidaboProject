@@ -24,6 +24,7 @@
 
 //-------------- GMS: Object os scene types (Object pop up)
 #define HURIKAN 'h'
+#define HANOI 'H'
 #define CAMIO 'm'
 #define CILINDER 'y'
 #define CUBE 'c'

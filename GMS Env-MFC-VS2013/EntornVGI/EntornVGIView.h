@@ -200,7 +200,8 @@ public:
 	void CEntornVGIView::Teclat_ColorObjecte(UINT nChar, UINT nRepCnt);
 	void CEntornVGIView::Teclat_ColorFons(UINT nChar, UINT nRepCnt);
 	void CEntornVGIView::Teclat_Navega(UINT nChar, UINT nRepCnt);
-	void Teclat_Robot(UINT nChar, UINT nRepCnt);
+	void CEntornVGIView::Teclat_Robot(UINT nChar, UINT nRepCnt);
+	void CEntornVGIView::Teclat_HanoiTower(UINT nChar, UINT nRepCnt);
 	void CEntornVGIView::Teclat_Pan(UINT nChar, UINT nRepCnt);
 	void CEntornVGIView::Teclat_TransEscala(UINT nChar, UINT nRepCnt);
 	void CEntornVGIView::Teclat_TransRota(UINT nChar, UINT nRepCnt);
@@ -340,6 +341,8 @@ public:
 	afx_msg void OnNegativeWristy();
 	afx_msg void OnNegativeWristz();
 	afx_msg void OnCloseClamp();
+	afx_msg void OnObjectHanoi();
+	afx_msg void OnUpdateObjectHanoi(CCmdUI *pCmdUI);
 };
 
 #ifndef _DEBUG  // Versión de depuración en EntornVGIView.cpp
