@@ -1567,8 +1567,8 @@ void CEntornVGIView::Teclat_HanoiTower(UINT nChar, UINT nRepCnt) {
 
 	if (nChar == VK_SPACE)
 	{
-		HanoiGame::Init();
 		KillTimer(WM_TIMER);
+		HanoiGame::Init();
 	}
 
 	if (nChar == VK_HOME)
@@ -1576,7 +1576,7 @@ void CEntornVGIView::Teclat_HanoiTower(UINT nChar, UINT nRepCnt) {
 		if (HanoiGame::isInit) {
 			HanoiGame::HanoiAlgorithm(HanoiGame::getN(), HanoiGame::towers[0], HanoiGame::towers[2], HanoiGame::towers[1]);
 			HanoiGame::isStart = true;
-			SetTimer(WM_TIMER, 1000, NULL);
+			SetTimer(WM_TIMER, 10, NULL);
 		}
 	}
 
@@ -2912,6 +2912,33 @@ void CEntornVGIView::OnObjectHanoi()
 	//Light
 	ilumina = GOURAUD;
 	test_vis = false;		oculta = true;
+
+	//texture
+	wglMakeCurrent(m_pDC->GetSafeHdc(), m_hRC);
+
+	loadIMA("./textures/woodh.jpg", 1);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+
+	loadIMA("./textures/woodv.jpg", 2);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+
+	loadIMA("./textures/plastic.jpg", 3);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+
+	// Switch off OpenGL context (from this point accept OpenGL commands are'nt accepted)
+	wglMakeCurrent(m_pDC->GetSafeHdc(), m_hRC);
 
 	InvalidateRect(NULL, false);
 }

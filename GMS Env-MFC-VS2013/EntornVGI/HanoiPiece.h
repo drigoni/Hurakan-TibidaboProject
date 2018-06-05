@@ -18,8 +18,8 @@ public:
 	~HanoiPiece();
 	float getR();
 	int getN();
-	void Draw();
-	static void DrawPiece(float radius, Color* color);
+	void Draw(GLuint texturID[NUM_MAX_TEXTURES]);
+	static void DrawPiece(float radius, Color* color, GLuint texturID[NUM_MAX_TEXTURES]);
 
 private:
 	float r;

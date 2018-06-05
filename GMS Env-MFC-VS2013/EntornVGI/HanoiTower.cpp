@@ -13,6 +13,7 @@ HanoiTower::~HanoiTower() {
 	for (std::list<HanoiPiece*>::iterator it = pieces.begin(); it != pieces.end(); ++it) {
 		delete (*it);
 	}
+	pieces.clear();
 }
 
 void HanoiTower::Push(HanoiPiece* p) {
@@ -34,26 +35,38 @@ float HanoiTower::getHeight() {
 	return height;
 }
 
+float HanoiTower::getZLastPeace() {
+	return pieces.size() + 0.5;
+}
 
-void HanoiTower::Draw() {
-	HanoiTower::DrawCylinder(radius, this->getHeight(), this->xPosition);
+float HanoiTower::getXPosition() {
+	return xPosition;
+}
+
+
+void HanoiTower::Draw(GLuint texturID[NUM_MAX_TEXTURES]) {
+	
+	HanoiTower::DrawCylinder(radius, this->getHeight(), this->xPosition, texturID);
 	//Pieces
 	int i = 0;
 	for (std::list<HanoiPiece*>::iterator it = pieces.begin(); it != pieces.end(); ++it) {
 		glPushMatrix();
-		glTranslatef(xPosition, 0, i + 0.5);
-		(*it)->Draw();
+			glTranslatef(xPosition, 0, i + 0.5);
+			(*it)->Draw(texturID);
 		glPopMatrix();
 		//increment counter
 		i++;
 	}
 }
 
-void HanoiTower::DrawCylinder(float radius, float height, float xPosition) {
+void HanoiTower::DrawCylinder(float radius, float height, float xPosition, GLuint texturID[NUM_MAX_TEXTURES]) {
 	//Cylinder
 	glPushMatrix();
-		glColor3f(0.5f, 0.35f, 0.05f);
-		glTranslatef(xPosition, 0, 0);
-		glutSolidCylinder(radius, height, 100, 100);
+		glPushMatrix();
+			glColor3f(0.5f, 0.35f, 0.05f);
+			glTranslatef(xPosition, 0, 0);
+			glBindTexture(GL_TEXTURE_2D, texturID[2]);
+			glutSolidCylinder(radius, height, 100, 100);
+		glPopMatrix();
 	glPopMatrix();
 }

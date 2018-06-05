@@ -11,6 +11,8 @@ bool HanoiGame::isStart = false;
 bool HanoiGame::isBackward = false;
 std::list<::HanoiGame::Move*> HanoiGame::movesForward;
 std::list<::HanoiGame::Move*> HanoiGame::movesBackward;
+HanoiGame::Animation* HanoiGame::animation;
+bool HanoiGame::isAnimation = false;
 
 //constructor
 HanoiGame::HanoiGame()
@@ -25,6 +27,12 @@ HanoiGame::~HanoiGame()
 	for (std::list<HanoiGame::Move*>::iterator it = movesBackward.begin(); it != movesBackward.end(); ++it) {
 		delete (*it);
 	}
+	movesForward.clear();
+	movesBackward.clear();
+
+	delete towers[0];
+	delete towers[1];
+	delete towers[2];
 }
 
 void HanoiGame::Increment() {
@@ -57,6 +65,8 @@ void HanoiGame::Init() {
 	//clearing
 	isStart = false;
 	isPause = false;
+	isBackward = false;
+	isAnimation = false;
 	n = nKeyboard;
 	for (std::list<HanoiGame::Move*>::iterator it = movesForward.begin(); it != movesForward.end(); ++it) {
 		delete (*it);
@@ -64,9 +74,14 @@ void HanoiGame::Init() {
 	for (std::list<HanoiGame::Move*>::iterator it = movesBackward.begin(); it != movesBackward.end(); ++it) {
 		delete (*it);
 	}
+	movesForward.clear();
+	movesBackward.clear();
 	delete towers[0];
 	delete towers[1];
 	delete towers[2];
+	delete animation;
+	
+	
 
 	//make towers
 	towers[0] = new HanoiTower(-getSpace(), radius, getHeight());
@@ -90,36 +105,39 @@ void HanoiGame::Init() {
 
 void HanoiGame::OnTimer() {
 	if (!HanoiGame::isPause) {
-		if (!HanoiGame::isBackward){
-			if (!movesForward.empty()) {
-				HanoiGame::Move* move = movesForward.front();
-				movesForward.pop_front();
-				HanoiTower* t1 = move->getT1();
-				HanoiPiece* p = t1->Pop();
-				HanoiTower* t2 = move->getT2();
-				t2->Push(p);
-				movesBackward.push_back(move);
+		if (!isAnimation) {
+			if (!HanoiGame::isBackward) {
+				if (!movesForward.empty()) {
+					HanoiGame::Move* move = movesForward.front();
+					movesForward.pop_front();
+					movesBackward.push_front(move);
+					animation = new HanoiGame::Animation(move, HanoiGame::isBackward);
+					HanoiGame::isAnimation = true;
+				}
+			}
+			else {
+				if (!movesBackward.empty()) {
+					HanoiGame::Move* move = movesBackward.front();
+					movesBackward.pop_front();
+					movesForward.push_front(move);
+					animation = new HanoiGame::Animation(move, HanoiGame::isBackward);
+					HanoiGame::isAnimation = true;
+				}
 			}
 		}
 		else {
-			if (!movesBackward.empty()) {
-				HanoiGame::Move* move = movesBackward.front();
-				movesBackward.pop_front();
-				HanoiTower* t2 = move->getT2();
-				HanoiPiece* p = t2->Pop();
-				HanoiTower* t1 = move->getT1();
-				t1->Push(p);
-				movesForward.push_back(move);
-			}
+			HanoiGame::isAnimation = HanoiGame::animation->isAnimation;
 		}
 	}
 }
 
-void HanoiGame::Draw() {
+void HanoiGame::Draw(GLuint texturID[NUM_MAX_TEXTURES]) {
 	if (HanoiGame::isInit) {
+
 		glPushMatrix();
 		// Base
 		glPushMatrix();
+		glBindTexture(GL_TEXTURE_2D, texturID[1]);
 		glColor3f(0.5f, 0.35f, 0.05f);
 		glTranslatef(0, 0, -0.5);
 		glScalef(getSpace() * 3, getSpace(), 1);
@@ -129,7 +147,15 @@ void HanoiGame::Draw() {
 		// Towers
 		for (int i = 0; i < 3; i++) {
 			glPushMatrix();
-			towers[i]->Draw();
+			towers[i]->Draw(texturID);
+			glPopMatrix();
+		}
+
+		if (HanoiGame::isAnimation ) {
+			if (!HanoiGame::isPause)
+				animation->Calculation();
+			glPushMatrix();
+			animation->Draw(texturID);
 			glPopMatrix();
 		}
 
@@ -165,6 +191,116 @@ HanoiTower* HanoiGame::Move::getT1() {
 }
 HanoiTower* HanoiGame::Move::getT2() {
 	return this->t2;
+}
+
+
+
+//---------------------------------------------------
+//----------------- ANIMATION -----------------------
+//---------------------------------------------------
+bool HanoiGame::Animation::isAnimation = false;
+
+HanoiGame::Animation::~Animation() {
+	delete piece;
+}
+
+
+HanoiGame::Animation::Animation(HanoiGame::Move* move, bool isBackward) {
+	int counter = 0;
+	this->move = move;
+	this->isBackward = isBackward;
+
+	//extract the piece from the tower
+	if (!isBackward) {
+		HanoiTower* t1 = move->getT1();
+		piece = t1->Pop();
+	}
+	else {
+		HanoiTower* t2 = move->getT2();
+		piece = t2->Pop();
+	}
+
+	HanoiGame::Animation::isAnimation = true;
+
+	//if (piece != NULL)
+	//	HanoiGame::Animation::isAnimation = true;
+}
+
+void HanoiGame::Animation::Calculation() {
+	if (isAnimation) {
+		float xStart = 0;
+		float xEnd = 0;
+		float zStart = 0;
+		float zEnd = 0;
+		float height = 0;
+		HanoiTower* t1 = NULL;
+		HanoiTower* t2 = NULL;
+
+		if (!isBackward) {
+			t1 = move->getT1();
+			t2 = move->getT2();
+		}
+		else {
+			//inverted
+			t1 = move->getT2();
+			t2 = move->getT1();
+		}
+
+		xStart = t1->getXPosition();
+		xEnd = t2->getXPosition();
+		zStart = t1->getZLastPeace() + 1;
+		zEnd = t2->getZLastPeace() + 1;
+		height = t1->getHeight() + 1;
+
+		if (counter <= 33) {
+			//step
+			x = xStart;
+			z = zStart;
+			z += counter * (height - zStart) / 33;
+		}
+		else {
+			if (counter <= 66) {
+				//step
+				x = xStart;
+				z = height;
+				if (xEnd < xStart)
+					x -= (counter - 33) * abs((xEnd - xStart)) / 33;
+				else
+					x += (counter - 33) * abs((xEnd - xStart)) / 33;
+			}
+			else
+			{
+				if (counter <= 100) {
+					//step
+					x = xEnd;
+					z = height;
+					z -= (counter - 66) * (height - zEnd) / 33;
+				}
+				else {
+					if (!isBackward) {
+						HanoiTower* t2 = move->getT2();
+						t2->Push(piece);
+					}
+					else {
+						HanoiTower* t1 = move->getT1();
+						t1->Push(piece);
+					}
+					isAnimation = false;
+				}
+			}
+		}
+		counter++;
+	}
+}
+
+void HanoiGame::Animation::Draw(GLuint texturID[NUM_MAX_TEXTURES]) {
+	if (isAnimation) {
+		//draw
+		glPushMatrix();
+		glTranslatef(x, 0, z);
+		piece->Draw(texturID);
+		glPopMatrix();
+	}
 }
 
 

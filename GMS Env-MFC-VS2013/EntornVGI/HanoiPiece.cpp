@@ -24,11 +24,12 @@ int HanoiPiece::getN() {
 	return this->n;
 }
 
-void HanoiPiece::Draw() {
-	HanoiPiece::DrawPiece(this->r, this->color);
+void HanoiPiece::Draw(GLuint texturID[NUM_MAX_TEXTURES]) {
+	HanoiPiece::DrawPiece(this->r, this->color, texturID);
 }
 
-void HanoiPiece::DrawPiece(float radius, Color* color) {
+void HanoiPiece::DrawPiece(float radius, Color* color, GLuint texturID[NUM_MAX_TEXTURES]) {
+	glBindTexture(GL_TEXTURE_2D, texturID[3]);
 	glColor3f(color->getR(), color->getG(), color->getB());
 	glScalef(radius,radius,1);
 	//              X1  X2

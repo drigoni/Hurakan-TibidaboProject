@@ -19,7 +19,7 @@ public:
 	static int getNKeyboard();
 	static float getHeight();
 	static float getSpace();
-	static void Draw();
+	static void Draw(GLuint texturID[NUM_MAX_TEXTURES]);
 	static void Init();
 
 	static void OnTimer();
@@ -31,8 +31,24 @@ public:
 		HanoiTower* getT1();
 		HanoiTower* getT2();
 	private:
-		HanoiTower* t1;
+		HanoiTower * t1;
 		HanoiTower* t2;
+	};
+
+	class Animation {
+	public:
+		Animation(Move* move, bool isBackward);
+		~Animation();
+		static bool isAnimation;
+		void Calculation();
+		void Draw(GLuint texturID[NUM_MAX_TEXTURES]);
+	private:
+		float x, z;
+		bool isBackward;
+		int counter;
+		Move * move;
+		HanoiPiece* piece;
+
 	};
 private: 
 	static int nKeyboard;
@@ -41,5 +57,7 @@ private:
 	
 	static std::list<HanoiGame::Move*> movesForward;
 	static std::list<HanoiGame::Move*> movesBackward;
+	static Animation* animation;
+	static bool isAnimation;
 };
 

@@ -44,7 +44,8 @@ void dibuixa_EscenaGL(char objecte, CColor col_object, bool ref_mat, bool sw_mat
 	{
 // HANOI case
 	case HANOI:
-		HanoiGame::Draw();
+		glEnable(GL_TEXTURE_2D);
+		HanoiGame::Draw(texturID);
 		break;
 
 // Hurikan drawing

@@ -7,11 +7,15 @@ public:
 	~HanoiTower();
 
 	float getHeight();
+	float getZLastPeace();
+	float getXPosition();
+
 	void Push(HanoiPiece* p);
 	HanoiPiece* Pop();
 
-	void Draw();
-	static void DrawCylinder(float radius, float height, float xPosition);
+	void Draw(GLuint texturID[NUM_MAX_TEXTURES]);
+	static void DrawCylinder(float radius, float height, float xPosition, GLuint texturID[NUM_MAX_TEXTURES]);
+
 private:
 	std::list <HanoiPiece*> pieces;
 	float xPosition;
