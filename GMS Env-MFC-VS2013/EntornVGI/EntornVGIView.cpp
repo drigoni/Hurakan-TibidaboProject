@@ -1207,7 +1207,8 @@ void CEntornVGIView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 		CEntornVGIView::Teclat_Robot(nChar, nRepCnt);
 	}
 	if (objecte == HANOI) {
-		HanoiGame::Keyboard(nChar, nRepCnt);
+		//HanoiGame::Keyboard(nChar, nRepCnt);
+		CEntornVGIView::Teclat_HanoiTower(nChar, nRepCnt);
 	}
 
 // OnPaint() call to redraw the scene
@@ -1558,7 +1559,38 @@ void CEntornVGIView::Teclat_Robot(UINT nChar, UINT nRepCnt)
 }
 
 void CEntornVGIView::Teclat_HanoiTower(UINT nChar, UINT nRepCnt) {
-	HanoiGame::Keyboard(nChar, nRepCnt);
+	if (nChar == VK_DOWN)
+		HanoiGame::Decrement();
+
+	if (nChar == VK_UP)
+		HanoiGame::Increment();
+
+	if (nChar == VK_SPACE)
+	{
+		HanoiGame::Init();
+		KillTimer(WM_TIMER);
+	}
+
+	if (nChar == VK_HOME)
+	{
+		if (HanoiGame::isInit) {
+			HanoiGame::HanoiAlgorithm(HanoiGame::getN(), HanoiGame::towers[0], HanoiGame::towers[2], HanoiGame::towers[1]);
+			HanoiGame::isStart = true;
+			SetTimer(WM_TIMER, 1000, NULL);
+		}
+	}
+
+	if (nChar == VK_PAUSE)
+	{
+		if (HanoiGame::isStart)
+			HanoiGame::isPause = !HanoiGame::isPause;
+	}
+
+	if (nChar == VK_F5)
+	{
+		if (HanoiGame::isStart)
+			HanoiGame::isBackward = !HanoiGame::isBackward;
+	}
 }
 
 
@@ -2266,46 +2298,53 @@ BOOL CEntornVGIView::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 /* ------------------------------------------------------------------------- */
 void CEntornVGIView::OnTimer(UINT_PTR nIDEvent)
 {
-
-// TODO: Add your message handler code here and/or call default
-	if (anima && !pause)	{
-		counter = (float)i / (float)N;
-		// Message handler of animation when n ms. have occurred
-		elbowz = aezi + counter * (aezf - aezi);
-		elbowx = aexi + counter * (aexf - aexi);
-		wristz = bwzi + counter * (bwzf - bwzi);
-		wristy = bwyi + counter * (bwyf - bwyi);
-		wristx = bwxi + counter * (bwxf - bwxi);
-		clamp = aci + counter * (acf - aci);
-
-		if (iDirection == 0)
-			i++;
-		else
-			i--;
- 
-		if (i > N) {
-			iDirection = 1;
-			i = N;
-		}
-		else if (i < 0) {
-			i = 0;
-			iDirection = 0;
-		}
+	if (objecte == HANOI)
+	{
+		HanoiGame::OnTimer();
 
 		// OnPaint() call to redraw the scene
 		InvalidateRect(NULL, false);
-		}
-	else if (satelit)	{	// SATELLITE OPTION: OPV increment according mpouse movements
-		//OPV.R = OPV.R + m_EsfeIncEAvall.R;
-		OPV.alfa = OPV.alfa + m_EsfeIncEAvall.alfa;
-		while (OPV.alfa > 360) OPV.alfa = OPV.alfa - 360;	while (OPV.alfa < 0) OPV.alfa = OPV.alfa + 360;
-		OPV.beta = OPV.beta + m_EsfeIncEAvall.beta;
-		while (OPV.beta > 360) OPV.beta = OPV.beta - 360;	while (OPV.beta < 0) OPV.beta = OPV.beta + 360;
+	}
+	else {
+		// TODO: Add your message handler code here and/or call default
+		if (anima && !pause) {
+			counter = (float)i / (float)N;
+			// Message handler of animation when n ms. have occurred
+			elbowz = aezi + counter * (aezf - aezi);
+			elbowx = aexi + counter * (aexf - aexi);
+			wristz = bwzi + counter * (bwzf - bwzi);
+			wristy = bwyi + counter * (bwyf - bwyi);
+			wristx = bwxi + counter * (bwxf - bwxi);
+			clamp = aci + counter * (acf - aci);
 
-		// OnPaint() call to redraw the scene
-		InvalidateRect(NULL, false);
-		}
+			if (iDirection == 0)
+				i++;
+			else
+				i--;
 
+			if (i > N) {
+				iDirection = 1;
+				i = N;
+			}
+			else if (i < 0) {
+				i = 0;
+				iDirection = 0;
+			}
+
+			// OnPaint() call to redraw the scene
+			InvalidateRect(NULL, false);
+		}
+		else if (satelit) {	// SATELLITE OPTION: OPV increment according mpouse movements
+			//OPV.R = OPV.R + m_EsfeIncEAvall.R;
+			OPV.alfa = OPV.alfa + m_EsfeIncEAvall.alfa;
+			while (OPV.alfa > 360) OPV.alfa = OPV.alfa - 360;	while (OPV.alfa < 0) OPV.alfa = OPV.alfa + 360;
+			OPV.beta = OPV.beta + m_EsfeIncEAvall.beta;
+			while (OPV.beta > 360) OPV.beta = OPV.beta - 360;	while (OPV.beta < 0) OPV.beta = OPV.beta + 360;
+
+			// OnPaint() call to redraw the scene
+			InvalidateRect(NULL, false);
+		}
+	}
 	CView::OnTimer(nIDEvent);
 }
 

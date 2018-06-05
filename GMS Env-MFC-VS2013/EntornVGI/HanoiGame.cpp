@@ -8,6 +8,9 @@ HanoiTower* HanoiGame::towers[3];
 bool HanoiGame::isInit = false;
 bool HanoiGame::isPause = false;
 bool HanoiGame::isStart = false;
+bool HanoiGame::isBackward = false;
+std::list<::HanoiGame::Move*> HanoiGame::movesForward;
+std::list<::HanoiGame::Move*> HanoiGame::movesBackward;
 
 //constructor
 HanoiGame::HanoiGame()
@@ -16,29 +19,11 @@ HanoiGame::HanoiGame()
 //destructor
 HanoiGame::~HanoiGame()
 {
-}
-
-//keyboard method
-void HanoiGame::Keyboard(UINT nChar, UINT nRepCnt) {
-	if (nChar == VK_DOWN)
-		HanoiGame::Decrement();
-	
-	if (nChar == VK_UP)
-		HanoiGame::Increment();
-
-	if (nChar == VK_SPACE)
-	{
-		HanoiGame::Init();
+	for (std::list<HanoiGame::Move*>::iterator it = movesForward.begin(); it != movesForward.end(); ++it) {
+		delete (*it);
 	}
-
-	if (nChar == VK_F5)
-	{
-		HanoiGame::Start();
-	}
-
-	if (nChar == VK_PAUSE)
-	{
-		HanoiGame::Stop();
+	for (std::list<HanoiGame::Move*>::iterator it = movesBackward.begin(); it != movesBackward.end(); ++it) {
+		delete (*it);
 	}
 }
 
@@ -73,6 +58,12 @@ void HanoiGame::Init() {
 	isStart = false;
 	isPause = false;
 	n = nKeyboard;
+	for (std::list<HanoiGame::Move*>::iterator it = movesForward.begin(); it != movesForward.end(); ++it) {
+		delete (*it);
+	}
+	for (std::list<HanoiGame::Move*>::iterator it = movesBackward.begin(); it != movesBackward.end(); ++it) {
+		delete (*it);
+	}
 	delete towers[0];
 	delete towers[1];
 	delete towers[2];
@@ -96,15 +87,32 @@ void HanoiGame::Init() {
 	HanoiGame::isInit = true;
 }
 
-void HanoiGame::Start(int t) {
-	if (isInit) {
-		HanoiGame::HanoiAlgorithm(n, towers[0], towers[2], towers[1]);
-		isStart = true;
+
+void HanoiGame::OnTimer() {
+	if (!HanoiGame::isPause) {
+		if (!HanoiGame::isBackward){
+			if (!movesForward.empty()) {
+				HanoiGame::Move* move = movesForward.front();
+				movesForward.pop_front();
+				HanoiTower* t1 = move->getT1();
+				HanoiPiece* p = t1->Pop();
+				HanoiTower* t2 = move->getT2();
+				t2->Push(p);
+				movesBackward.push_back(move);
+			}
+		}
+		else {
+			if (!movesBackward.empty()) {
+				HanoiGame::Move* move = movesBackward.front();
+				movesBackward.pop_front();
+				HanoiTower* t2 = move->getT2();
+				HanoiPiece* p = t2->Pop();
+				HanoiTower* t1 = move->getT1();
+				t1->Push(p);
+				movesForward.push_back(move);
+			}
+		}
 	}
-}
-
-void HanoiGame::Stop() {
-
 }
 
 void HanoiGame::Draw() {
@@ -131,19 +139,35 @@ void HanoiGame::Draw() {
 
 
 
-void HanoiGame::HanoiAlgorithm(int pieces, HanoiTower* l, HanoiTower* c, HanoiTower* r) {
+void HanoiGame::HanoiAlgorithm(int pieces, HanoiTower* from_rod, HanoiTower* to_rod, HanoiTower* aux_rod) {
 	if (pieces == 1)
 	{	
-		HanoiPiece* p = l->Pop();
-		c->Push(p);
+		movesForward.push_back(new HanoiGame::Move(from_rod, to_rod));
 		return;
 	}
-	HanoiGame::HanoiAlgorithm(pieces - 1, l, r, c);
-	HanoiPiece* p = l->Pop();
-	c->Push(p);
-	return;
-	HanoiGame::HanoiAlgorithm(pieces - 1, r, c, l);
+	HanoiGame::HanoiAlgorithm(pieces - 1, from_rod, aux_rod, to_rod);
+	movesForward.push_back(new HanoiGame::Move(from_rod, to_rod));
+	HanoiGame::HanoiAlgorithm(pieces - 1, aux_rod, to_rod, from_rod);
 }
+
+
+
+//---------------------------------------------------
+//----------------- MOVE ----------------------------
+//---------------------------------------------------
+HanoiGame::Move::Move(HanoiTower* t1, HanoiTower*  t2) {
+	this->t1 = t1;
+	this->t2 = t2;
+}
+
+HanoiTower* HanoiGame::Move::getT1() {
+	return this->t1;
+}
+HanoiTower* HanoiGame::Move::getT2() {
+	return this->t2;
+}
+
+
 
 
 
