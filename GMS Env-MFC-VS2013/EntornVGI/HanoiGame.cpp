@@ -221,9 +221,6 @@ HanoiGame::Animation::Animation(HanoiGame::Move* move, bool isBackward) {
 	}
 
 	HanoiGame::Animation::isAnimation = true;
-
-	//if (piece != NULL)
-	//	HanoiGame::Animation::isAnimation = true;
 }
 
 void HanoiGame::Animation::Calculation() {
@@ -286,6 +283,7 @@ void HanoiGame::Animation::Calculation() {
 						t1->Push(piece);
 					}
 					isAnimation = false;
+					piece = NULL;
 				}
 			}
 		}
