@@ -33,7 +33,7 @@ void HanoiPiece::DrawPiece(float radius, Color* color, GLuint texturID[NUM_MAX_T
 	glColor3f(color->getR(), color->getG(), color->getB());
 	glScalef(radius,radius,1);
 	//              X1  X2
-	glutSolidTorus(0.5, 1.5/radius, 100, 100); //  radius*X2 -X1 = 1(1 equal to radius cylinder)
+	glutSolidTorus(0.5, 1/ radius + 0.5, 100, 100); //  radius*X2 -X1 = 1(1 equal to radius cylinder)
 }
 
 
